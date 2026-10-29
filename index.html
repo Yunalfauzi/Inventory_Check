@@ -7,24 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tambahkan library html5-qrcode untuk scanner super cepat -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         outdoor: {
-                            900: '#18181b', // Zinc 900
-                            800: '#27272a', // Zinc 800
-                            700: '#3f3f46', // Zinc 700
-                            accent: '#d97706', // Amber 600
-                            accentHover: '#b45309', // Amber 700
-                            success: '#059669', // Emerald 600
-                            new: '#2563eb', // Blue 600 for New Arrival
+                            900: '#18181b',
+                            800: '#27272a',
+                            700: '#3f3f46',
+                            accent: '#d97706',
+                            accentHover: '#b45309',
+                            success: '#059669',
+                            new: '#2563eb',
                         }
                     }
                 }
@@ -32,81 +29,26 @@
         }
     </script>
     <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #27272a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #52525b; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #d97706; 
-        }
-        
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #toast-container {
-            position: fixed;
-            top: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        
-        .toast {
-            padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            color: white;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            animation: slideInDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        @keyframes slideInDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        /* Sidebar Transition */
-        #request-sidebar {
-            transition: transform 0.3s ease-in-out;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #27272a; }
+        ::-webkit-scrollbar-thumb { background: #52525b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d97706; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
+        .toast { padding: 1rem 1.5rem; border-radius: 0.5rem; color: white; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); animation: slideInDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards; display: flex; align-items: center; gap: 0.75rem; }
+        @keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        #request-sidebar { transition: transform 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-outdoor-900 text-zinc-300 font-sans min-h-screen selection:bg-outdoor-accent selection:text-white overflow-x-hidden">
 
-    <!-- Loading Overlay -->
     <div id="loading-overlay" class="fixed inset-0 z-[110] bg-outdoor-900/95 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity duration-300">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-outdoor-accent mb-4"></div>
-        <p class="text-white font-medium animate-pulse text-lg">Membaca Master Spreadsheet...</p>
-        <p class="text-zinc-500 text-sm mt-2">Mengoptimalkan render data secepat kilat</p>
+        <p class="text-white font-medium animate-pulse text-lg">Menghubungkan ke Spreadsheet...</p>
+        <p class="text-zinc-500 text-sm mt-2">Sinkronisasi data secepat kilat</p>
     </div>
 
     <div id="toast-container"></div>
@@ -119,13 +61,10 @@
             <h1 class="text-xl font-bold text-white tracking-wide">Inventory Check <span class="font-normal text-zinc-400 text-base border-l border-outdoor-700 ml-2 pl-2">Form Pengecekan & Filter Stok</span></h1>
         </div>
         <div class="flex items-center gap-3">
-            <!-- Tombol Request Cust -->
             <button onclick="toggleRequestSidebar(true)" class="relative px-4 py-2 rounded-lg bg-outdoor-900 hover:bg-outdoor-700 text-white font-medium transition-colors border border-outdoor-600 flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-clipboard-list text-zinc-300"></i> Request Cust
                 <span id="request-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden border border-outdoor-800">0</span>
             </button>
-
-            <!-- Tombol Update Master -->
             <button onclick="toggleMasterModal(true)" class="px-4 py-2 rounded-lg bg-outdoor-700 hover:bg-outdoor-600 text-white font-medium transition-colors border border-outdoor-600 flex items-center gap-2">
                 <i class="fa-solid fa-database text-outdoor-accent"></i> Update Master
             </button>
@@ -133,7 +72,6 @@
     </header>
 
     <main class="p-6 max-w-[1400px] mx-auto flex flex-col gap-6">
-        
         <div class="flex bg-outdoor-800 p-1.5 rounded-xl border border-outdoor-700 w-full md:w-fit shadow-sm">
             <button id="btn-tab-cek" onclick="switchTab('cek')" class="flex-1 md:flex-none px-6 py-2.5 text-sm font-bold rounded-lg bg-outdoor-accent text-white shadow transition-all flex items-center justify-center gap-2">
                 <i class="fa-solid fa-clipboard-check"></i> Cek Stok
@@ -148,7 +86,6 @@
                 <h2 class="text-xl font-bold text-white mb-6 border-b border-outdoor-700 pb-2"><i class="fa-solid fa-clipboard-check text-outdoor-accent mr-2"></i>Pengecekan Detail Stok</h2>
                 
                 <div id="stock-check-container" class="space-y-6">
-                    <!-- Input Section -->
                     <div class="space-y-2 max-w-md">
                         <label for="sku-input" class="block text-sm font-medium text-zinc-300">Scan / Ketik SKU Code</label>
                         <div class="flex gap-2">
@@ -158,7 +95,6 @@
                                 </div>
                                 <input type="text" id="sku-input" required class="bg-outdoor-900 border border-outdoor-700 text-white text-lg rounded-lg focus:ring-outdoor-accent focus:border-outdoor-accent block w-full pl-10 p-4 uppercase font-mono tracking-widest shadow-inner" placeholder="Cth: 910000005001">
                             </div>
-                            <!-- Tombol Kamera -->
                             <button type="button" onclick="startScanner()" class="px-4 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors border border-blue-800 shadow-sm" title="Scan Barcode via Kamera">
                                 <i class="fa-solid fa-camera text-lg"></i>
                             </button>
@@ -169,13 +105,11 @@
                         <p id="sku-hint" class="text-xs text-zinc-500 mt-1">Ketik/scan SKU Code untuk memunculkan detail barang dan lokasi bin.</p>
                     </div>
 
-                    <!-- Horizontal Table Result Section -->
                     <div id="check-result-section" class="hidden space-y-3 mt-6">
                         <div class="overflow-x-auto border border-outdoor-700 rounded-lg shadow-sm">
                             <table class="w-full text-sm text-left whitespace-nowrap">
                                 <thead class="text-xs text-zinc-400 uppercase bg-outdoor-900 border-b border-outdoor-700">
                                     <tr>
-                                        <!-- Header Aksi -->
                                         <th class="px-3 py-3 text-center" title="Tambahkan ke Request Cust"><i class="fa-solid fa-plus text-outdoor-accent"></i></th>
                                         <th class="px-4 py-3">SKU Code</th>
                                         <th class="px-4 py-3">SKU Description</th>
@@ -193,9 +127,7 @@
                                         <th class="px-4 py-3 text-right">Total Diskon</th>
                                     </tr>
                                 </thead>
-                                <tbody id="check-result-body" class="divide-y divide-outdoor-700 bg-outdoor-800">
-                                    <!-- Data di-inject via JS -->
-                                </tbody>
+                                <tbody id="check-result-body" class="divide-y divide-outdoor-700 bg-outdoor-800"></tbody>
                             </table>
                         </div>
                     </div>
@@ -211,41 +143,27 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-4">
                         <div class="space-y-1">
                             <label class="text-xs font-medium text-zinc-400">Gender</label>
-                            <select id="filter-gender" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2">
-                                <option value="">Semua</option>
-                            </select>
+                            <select id="filter-gender" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2"><option value="">Semua</option></select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs font-medium text-zinc-400">MC LV 2</label>
-                            <select id="filter-mc2" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2">
-                                <option value="">Semua</option>
-                            </select>
+                            <select id="filter-mc2" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2"><option value="">Semua</option></select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs font-medium text-zinc-400">MC LV 3</label>
-                            <select id="filter-mc3" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2">
-                                <option value="">Semua</option>
-                            </select>
+                            <select id="filter-mc3" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2"><option value="">Semua</option></select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs font-medium text-zinc-400">MC LV 4</label>
-                            <select id="filter-mc4" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2">
-                                <option value="">Semua</option>
-                            </select>
+                            <select id="filter-mc4" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2"><option value="">Semua</option></select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs font-medium text-zinc-400">Status Promo</label>
-                            <select id="filter-promo" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2">
-                                <option value="">Semua</option>
-                                <option value="diskon">Sedang Diskon</option>
-                            </select>
+                            <select id="filter-promo" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2"><option value="">Semua</option><option value="diskon">Sedang Diskon</option></select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs font-medium text-zinc-400">Status Kedatangan</label>
-                            <select id="filter-new" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2">
-                                <option value="">Semua</option>
-                                <option value="new">New Arrival (Baru)</option>
-                            </select>
+                            <select id="filter-new" class="bg-outdoor-900 border border-outdoor-700 text-white text-sm rounded-lg focus:ring-outdoor-accent w-full p-2"><option value="">Semua</option><option value="new">New Arrival (Baru)</option></select>
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs font-medium text-zinc-400">Warna (Opsional)</label>
@@ -258,16 +176,11 @@
                     </div>
                     
                     <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" onclick="resetFilter()" class="px-4 py-2 rounded-lg border border-outdoor-700 text-zinc-300 hover:bg-outdoor-700 transition-colors text-sm">
-                            Reset Filter
-                        </button>
-                        <button type="submit" class="px-5 py-2 rounded-lg bg-outdoor-accent hover:bg-outdoor-accentHover text-white font-medium shadow transition-colors text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-search"></i> Cari Stok
-                        </button>
+                        <button type="button" onclick="resetFilter()" class="px-4 py-2 rounded-lg border border-outdoor-700 text-zinc-300 hover:bg-outdoor-700 transition-colors text-sm">Reset Filter</button>
+                        <button type="submit" class="px-5 py-2 rounded-lg bg-outdoor-accent hover:bg-outdoor-accentHover text-white font-medium shadow transition-colors text-sm flex items-center gap-2"><i class="fa-solid fa-search"></i> Cari Stok</button>
                     </div>
                 </form>
 
-                <!-- Tabel Hasil Pencarian -->
                 <div id="filter-result-section" class="hidden mt-6">
                     <div class="overflow-x-auto border border-outdoor-700 rounded-lg">
                         <table class="w-full text-sm text-left whitespace-nowrap">
@@ -281,37 +194,28 @@
                                     <th class="px-4 py-3 text-center">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="filter-result-body" class="divide-y divide-outdoor-700">
-                                <!-- Hasil disuntikkan via JS -->
-                            </tbody>
+                            <tbody id="filter-result-body" class="divide-y divide-outdoor-700"></tbody>
                         </table>
                     </div>
                     <p id="filter-count" class="text-xs text-zinc-500 mt-2 text-right"></p>
                 </div>
             </section>
         </div>
-
     </main>
 
     <!-- SIDEBAR REQUEST CUST -->
     <div id="request-overlay" onclick="toggleRequestSidebar(false)" class="fixed inset-0 bg-black/50 z-50 hidden backdrop-blur-sm transition-opacity opacity-0"></div>
     <div id="request-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-outdoor-800 border-l border-outdoor-700 z-50 transform translate-x-full shadow-2xl flex flex-col">
         <div class="p-5 border-b border-outdoor-700 flex justify-between items-center bg-outdoor-900">
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-clipboard-list text-outdoor-accent"></i> Daftar Request Cust
-            </h3>
-            <button onclick="toggleRequestSidebar(false)" class="text-zinc-400 hover:text-white transition-colors bg-outdoor-800 hover:bg-outdoor-700 w-8 h-8 rounded-full flex items-center justify-center">
-                <i class="fa-solid fa-times"></i>
-            </button>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-outdoor-accent"></i> Daftar Request Cust</h3>
+            <button onclick="toggleRequestSidebar(false)" class="text-zinc-400 hover:text-white transition-colors bg-outdoor-800 hover:bg-outdoor-700 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
         </div>
         
         <div class="p-4 bg-outdoor-900/50 border-b border-outdoor-700 text-sm text-zinc-400">
             <p>Catat barang yang diminta customer di sini agar Anda tidak lupa saat mengambil ke Bin/Gudang.</p>
         </div>
 
-        <!-- List Keranjang Request -->
         <div id="request-list-container" class="flex-1 overflow-y-auto p-4 space-y-3">
-            <!-- Item-item di-inject via JS -->
             <div id="request-empty" class="text-center py-10 text-zinc-500">
                 <i class="fa-solid fa-box-open text-4xl mb-3 opacity-50"></i>
                 <p>Belum ada request customer.</p>
@@ -320,48 +224,29 @@
         </div>
 
         <div class="p-4 border-t border-outdoor-700 bg-outdoor-900">
-            <button onclick="clearRequestCart()" class="w-full py-2.5 rounded-lg border border-red-900 text-red-400 hover:bg-red-900/30 hover:text-red-300 transition-colors font-medium flex justify-center items-center gap-2">
-                <i class="fa-solid fa-trash-can"></i> Kosongkan Daftar
-            </button>
+            <button onclick="clearRequestCart()" class="w-full py-2.5 rounded-lg border border-red-900 text-red-400 hover:bg-red-900/30 hover:text-red-300 transition-colors font-medium flex justify-center items-center gap-2"><i class="fa-solid fa-trash-can"></i> Kosongkan Daftar</button>
         </div>
     </div>
-
 
     <!-- UPDATE MASTER MODAL -->
     <div id="master-modal" class="fixed inset-0 z-[60] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-outdoor-900 rounded-xl border border-outdoor-700 shadow-2xl w-full max-w-4xl transform scale-95 opacity-0 transition-all duration-300" id="master-modal-content">
             <div class="p-5 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-database text-outdoor-accent"></i> Update Master
-                </h3>
-                <button onclick="toggleMasterModal(false)" class="text-zinc-400 hover:text-white transition-colors">
-                    <i class="fa-solid fa-times text-xl"></i>
-                </button>
+                <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-database text-outdoor-accent"></i> Update Master</h3>
+                <button onclick="toggleMasterModal(false)" class="text-zinc-400 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
             
             <div class="px-6 pb-6">
-                <!-- Tab Master -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-outdoor-800 p-1.5 rounded-lg border border-outdoor-700 w-full mb-4">
                     <input type="hidden" id="active-master-tab" value="bin">
-                    <button onclick="switchMasterTab('bin')" id="btn-m-bin" class="py-2 text-sm font-bold rounded-md bg-outdoor-accent text-white shadow transition-all flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-boxes-stacked"></i> Stok By Bin
-                    </button>
-                    <button onclick="switchMasterTab('artikel')" id="btn-m-artikel" class="py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-box-open"></i> Master Artikel
-                    </button>
-                    <button onclick="switchMasterTab('promo')" id="btn-m-promo" class="py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-tags"></i> Master Promo
-                    </button>
-                    <button onclick="switchMasterTab('new_arrival')" id="btn-m-new_arrival" class="py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-star"></i> New Arrival
-                    </button>
+                    <button onclick="switchMasterTab('bin')" id="btn-m-bin" class="py-2 text-sm font-bold rounded-md bg-outdoor-accent text-white shadow transition-all flex justify-center items-center gap-2"><i class="fa-solid fa-boxes-stacked"></i> Stok By Bin</button>
+                    <button onclick="switchMasterTab('artikel')" id="btn-m-artikel" class="py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2"><i class="fa-solid fa-box-open"></i> Master Artikel</button>
+                    <button onclick="switchMasterTab('promo')" id="btn-m-promo" class="py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2"><i class="fa-solid fa-tags"></i> Master Promo</button>
+                    <button onclick="switchMasterTab('new_arrival')" id="btn-m-new_arrival" class="py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2"><i class="fa-solid fa-star"></i> New Arrival</button>
                 </div>
 
-                <!-- Pilihan Program Promo (Hanya muncul jika tab promo aktif) -->
                 <div id="promo-program-container" class="mb-3 hidden bg-outdoor-800 p-3 rounded-lg border border-outdoor-700 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                    <label class="text-xs font-medium text-zinc-300 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-outdoor-accent"></i> Pilih Kategori Program Promo:
-                    </label>
+                    <label class="text-xs font-medium text-zinc-300 flex items-center gap-2"><i class="fa-solid fa-list-check text-outdoor-accent"></i> Pilih Kategori Program Promo:</label>
                     <div class="flex items-center gap-2 w-full sm:w-auto">
                         <select id="promo-program-select" class="bg-outdoor-900 border border-outdoor-700 text-white text-xs rounded-lg focus:ring-outdoor-accent p-2 w-full sm:w-64">
                             <option value="Diskon Bertingkat">Diskon Bertingkat</option>
@@ -371,9 +256,7 @@
                             <option value="Event Spesial / Gift">Event Spesial / Gift (Non-Diskon)</option>
                             <option value="Lainnya">Lainnya (Custom)</option>
                         </select>
-                        <button type="button" onclick="deleteCurrentPromoProgram()" class="px-3 py-2 bg-red-900/40 border border-red-800 text-red-400 hover:bg-red-900 hover:text-white rounded-lg text-xs transition-colors flex items-center gap-1 shrink-0" title="Hapus Program Promo yang dipilih">
-                            <i class="fa-solid fa-trash-can"></i> Hapus
-                        </button>
+                        <button type="button" onclick="deleteCurrentPromoProgram()" class="px-3 py-2 bg-red-900/40 border border-red-800 text-red-400 hover:bg-red-900 hover:text-white rounded-lg text-xs transition-colors flex items-center gap-1 shrink-0" title="Hapus Program Promo yang dipilih"><i class="fa-solid fa-trash-can"></i> Hapus</button>
                     </div>
                 </div>
 
@@ -381,21 +264,15 @@
                     <i class="fa-solid fa-paste"></i> Paste Data (CTRL+V) pada kotak di bawah ini...
                 </p>
 
-                <!-- Text Area for Pasting -->
                 <div class="relative">
-                    <textarea id="paste-area" rows="7" class="w-full bg-[#0d1117] border border-outdoor-700 rounded-lg p-4 text-zinc-300 font-mono text-sm focus:ring-1 focus:ring-outdoor-accent focus:border-outdoor-accent outline-none resize-y" placeholder="Copy data dari Excel lalu paste di sini...&#10;&#10;Format Kolom (Header tidak wajib):&#10;SKU Code | Bin Code | Qty"></textarea>
-                    
-                    <div class="absolute bottom-2 right-2 text-zinc-600 pointer-events-none">
-                        <i class="fa-solid fa-grip-lines-vertical rotate-45"></i>
-                    </div>
+                    <textarea id="paste-area" rows="7" class="w-full bg-[#0d1117] border border-outdoor-700 rounded-lg p-4 text-zinc-300 font-mono text-sm focus:ring-1 focus:ring-outdoor-accent focus:border-outdoor-accent outline-none resize-y" placeholder="Copy data dari Excel lalu paste di sini..."></textarea>
+                    <div class="absolute bottom-2 right-2 text-zinc-600 pointer-events-none"><i class="fa-solid fa-grip-lines-vertical rotate-45"></i></div>
                 </div>
-                <p class="text-xs text-zinc-500 mt-2 italic">*Data harus dipisahkan oleh kolom (Tab). Salin langsung dari file Excel atau Spreadsheet.</p>
+                <p id="paste-hint-text" class="text-xs text-zinc-500 mt-2 italic">*Data harus dipisahkan oleh kolom (Tab). Salin langsung dari file Excel atau Spreadsheet.</p>
 
                 <div class="pt-6 flex justify-between gap-4">
                     <button type="button" onclick="toggleMasterModal(false)" class="px-6 py-2.5 rounded-lg bg-outdoor-800 border border-outdoor-700 text-zinc-300 hover:bg-outdoor-700 transition-colors font-medium">Batal</button>
-                    <button type="button" onclick="processPastedData()" class="px-6 py-2.5 rounded-lg bg-outdoor-accent hover:bg-outdoor-accentHover text-white font-bold shadow-lg transition-colors flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Simpan & Sinkronkan
-                    </button>
+                    <button type="button" onclick="processPastedData()" class="px-6 py-2.5 rounded-lg bg-outdoor-accent hover:bg-outdoor-accentHover text-white font-bold shadow-lg transition-colors flex justify-center items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> Simpan & Sinkronkan</button>
                 </div>
             </div>
         </div>
@@ -404,21 +281,11 @@
     <!-- MODAL SCANNER KAMERA -->
     <div id="scanner-modal" class="fixed inset-0 z-[120] hidden bg-black/95 backdrop-blur-md flex flex-col items-center justify-center p-4 transition-opacity">
         <div class="w-full max-w-sm bg-outdoor-900 rounded-2xl overflow-hidden border border-outdoor-700 relative shadow-2xl">
-            <!-- Header Modal Scanner -->
             <div class="bg-outdoor-800 p-4 border-b border-outdoor-700 flex justify-between items-center">
                 <h3 class="text-white font-bold flex items-center gap-2"><i class="fa-solid fa-barcode text-outdoor-accent"></i> Scan Barcode Artikel</h3>
-                <button onclick="stopScanner()" class="text-zinc-400 hover:text-white transition-colors">
-                    <i class="fa-solid fa-times text-xl"></i>
-                </button>
+                <button onclick="stopScanner()" class="text-zinc-400 hover:text-white transition-colors"><i class="fa-solid fa-times text-xl"></i></button>
             </div>
-            
-            <!-- Area Kamera -->
-            <div id="reader" class="w-full bg-black min-h-[300px] flex items-center justify-center relative">
-                <!-- Fallback loading text jika kamera telat merespon -->
-                <span class="text-zinc-600 absolute text-sm animate-pulse">Menyiapkan Kamera...</span>
-            </div>
-            
-            <!-- Petunjuk -->
+            <div id="reader" class="w-full bg-black min-h-[300px] flex items-center justify-center relative"><span class="text-zinc-600 absolute text-sm animate-pulse">Menyiapkan Kamera...</span></div>
             <div class="p-4 text-center bg-outdoor-800 border-t border-outdoor-700">
                 <p class="text-xs text-zinc-400"><i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> Arahkan garis ke barcode. Sistem akan memproses secepat kilat otomatis.</p>
             </div>
@@ -426,89 +293,115 @@
     </div>
 
     <script>
-        // ============================================================================
-        // API CONFIG & DATA STATE
-        // ============================================================================
-        
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec"; 
+        const GAS_URL = "URL_WEB_APP_APPS_SCRIPT_ANDA"; 
 
         let masterArtikel = {};
-        
-        let masterStokBin = {
-            "910000005001": [ { binCode: "A-01-01", qty: 5 }, { binCode: "A-01-02", qty: 2 } ],
-            "910000008001": [ { binCode: "B-05-01", qty: 10 } ],
-            "910000012001": [ { binCode: "C-12-04", qty: 3 } ]
-        };
-        let masterPromo = {
-            "910000005001": [ { persentase: 10, nama: "Promo Member" }, { persentase: 30, nama: "Clearance Sale" } ],
-            "910000008001": [ { persentase: 20, nama: "Promo Kemerdekaan" } ]
-        };
-        let masterNewArrival = {
-            "910000012001": true,
-            "910000001001": true
-        };
-
-        // State untuk Request Customer
+        let masterStokBin = {};
+        let masterPromo = {};
+        let masterNewArrival = {};
         let requestCart = {};
-
-        const mockJsonSpreadsheet = [
-            {"sku":"910000001001","desc":"RANSEL ENDOWMNET, BLU, NOS","mc":"BACKPACK","price":0},
-            {"sku":"910000005001","desc":"R.ARMY, BLK, NOS","mc":"BACKPACK","price":925000},
-            {"sku":"910000005002","desc":"R.ARMY, GRE, NOS","mc":"BACKPACK","price":925000},
-            {"sku":"910000008001","desc":"R.DYNO 70+5L, RED, NOS","mc":"BACKPACK","price":1250000},
-            {"sku":"910000012001","desc":"R.EXCELCIOR-55L, GRE, NOS","mc":"BACKPACK","price":1200000}
-        ];
-
-        // ============================================================================
-        // DATA INITIALIZATION
-        // ============================================================================
         
-        const loadMasterData = async () => {
+        // Simpan buffer teks per tab agar saat pindah tab teksnya tidak tercampur
+        let tabPasteBuffers = { bin: "", artikel: "", promo: "", new_arrival: "" };
+
+        const loadAllMasters = async () => {
             const overlay = document.getElementById('loading-overlay');
             try {
-                let rawData = [];
-                
                 if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec") {
-                    await new Promise(r => setTimeout(r, 800)); // Simulasi network
-                    rawData = mockJsonSpreadsheet;
-                } else {
-                    const response = await fetch(GAS_URL);
-                    rawData = await response.json();
-                }
-
-                masterArtikel = {};
-                rawData.forEach(item => {
-                    const descParts = item.desc ? item.desc.split(',') : [];
-                    const warnaExtracted = descParts.length > 1 ? descParts[1].trim() : "-";
-                    const sizeExtracted = descParts.length > 2 ? descParts[2].trim() : "-";
-
-                    masterArtikel[item.sku] = {
-                        sku: item.sku,
-                        crossSite: "-",
-                        desc: item.desc || "-",
-                        mc2: "-", 
-                        mc3: "-", 
-                        mc4: item.mc || "-", 
-                        locAmount: item.price || 0, 
-                        gender: "-",
-                        warna: warnaExtracted,
-                        size: sizeExtracted
+                    await new Promise(r => setTimeout(r, 600));
+                    masterArtikel = {
+                        "910000001001": {sku:"910000001001", crossSite:"-", desc:"RANSEL ENDOWMNET, BLU, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:0, gender:"-", warna:"BLU", size:"NOS"},
+                        "910000005001": {sku:"910000005001", crossSite:"-", desc:"R.ARMY, BLK, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:925000, gender:"-", warna:"BLK", size:"NOS"}
                     };
-                });
+                    masterStokBin = { "910000005001": [{binCode:"A-01-01", qty:5}] };
+                    masterPromo = { "910000005001": [{persentase:10, nama:"Promo Member"}] };
+                    masterNewArrival = { "910000001001": true };
+                } else {
+                    // Tarik paralel dari Google Apps Script untuk masing-masing cache
+                    const [resArtikel, resBin, resPromo, resNew] = await Promise.all([
+                        fetch(`${GAS_URL}?type=artikel`).then(res => res.json()).catch(() => []),
+                        fetch(`${GAS_URL}?type=bin`).then(res => res.json()).catch(() => []),
+                        fetch(`${GAS_URL}?type=promo`).then(res => res.json()).catch(() => []),
+                        fetch(`${GAS_URL}?type=new_arrival`).then(res => res.json()).catch(() => [])
+                    ]);
+
+                    // Parse Artikel
+                    masterArtikel = {};
+                    if(Array.isArray(resArtikel)) {
+                        resArtikel.forEach(item => {
+                            const descParts = item.desc ? item.desc.split(',') : [];
+                            masterArtikel[item.sku] = {
+                                sku: item.sku, crossSite: item.crossSite || "-", desc: item.desc || "-",
+                                mc2: item.mc2 || "-", mc3: item.mc3 || "-", mc4: item.mc || "-",
+                                locAmount: item.price || 0, gender: item.gender || "-",
+                                warna: descParts.length > 1 ? descParts[1].trim() : "-",
+                                size: descParts.length > 2 ? descParts[2].trim() : "-"
+                            };
+                        });
+                    }
+
+                    // Parse Bin
+                    masterStokBin = {};
+                    if(Array.isArray(resBin)) {
+                        resBin.forEach(b => {
+                            if(!masterStokBin[b.sku]) masterStokBin[b.sku] = [];
+                            masterStokBin[b.sku].push({ binCode: b.binCode, qty: b.qty });
+                        });
+                    }
+
+                    // Parse Promo
+                    masterPromo = {};
+                    if(Array.isArray(resPromo)) {
+                        resPromo.forEach(p => {
+                            if(!masterPromo[p.sku]) masterPromo[p.sku] = [];
+                            masterPromo[p.sku].push({ persentase: p.persentase, nama: p.nama });
+                        });
+                    }
+
+                    // Parse New Arrival
+                    masterNewArrival = {};
+                    if(Array.isArray(resNew)) {
+                        resNew.forEach(sku => { masterNewArrival[sku] = true; });
+                    }
+                }
 
                 initFilters();
                 overlay.style.opacity = '0';
                 setTimeout(() => { overlay.style.display = 'none'; }, 300);
-                showToast("Berhasil memuat Master Data!", "success");
+                showToast("Master Data berhasil dimuat dari Cloud!", "success");
 
             } catch (error) {
-                console.error("Gagal memuat data:", error);
+                console.error("Error:", error);
                 overlay.innerHTML = `
                     <i class="fa-solid fa-triangle-exclamation text-red-500 text-5xl mb-4"></i>
-                    <p class="text-white font-bold">Gagal Terhubung ke Spreadsheet</p>
+                    <p class="text-white font-bold">Gagal Sinkronisasi Master</p>
                     <p class="text-zinc-400 text-sm mt-2">${error.message}</p>
                     <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-outdoor-accent rounded-lg text-white font-medium">Coba Lagi</button>
                 `;
+            }
+        };
+
+        const syncToCloud = async (type, dataArray) => {
+            if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec") {
+                showToast("Berhasil disimpan (Mode Demo/Local)!", "success");
+                return true;
+            }
+
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ type: type, data: JSON.stringify(dataArray) })
+                });
+                const res = await response.json();
+                if(res.status === "success") {
+                    showToast(res.message, "success");
+                    return true;
+                } else {
+                    throw new Error(res.message);
+                }
+            } catch (err) {
+                showToast("Gagal menyimpan ke Spreadsheet: " + err.message, "error");
+                return false;
             }
         };
 
@@ -517,14 +410,8 @@
         const showToast = (message, type = 'success') => {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            let icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-green-400"></i>' 
-                     : type === 'error' ? '<i class="fa-solid fa-circle-exclamation text-red-400"></i>'
-                     : '<i class="fa-solid fa-info-circle text-blue-400"></i>';
-            const bgColor = type === 'success' ? 'bg-zinc-800 border border-green-900/50' 
-                          : type === 'error' ? 'bg-zinc-800 border border-red-900/50'
-                          : 'bg-zinc-800 border border-blue-900/50';
-
-            toast.className = `toast ${bgColor}`;
+            let icon = type === 'success' ? '<i class="fa-solid fa-circle-check text-green-400"></i>' : '<i class="fa-solid fa-circle-exclamation text-red-400"></i>';
+            toast.className = `toast bg-zinc-800 border ${type === 'success' ? 'border-green-900/50' : 'border-red-900/50'}`;
             toast.innerHTML = `${icon} <span class="text-sm font-medium">${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 3000);
@@ -532,53 +419,37 @@
 
         const switchTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            
-            const btnBaseClass = "flex-1 md:flex-none px-6 py-2.5 text-sm font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex items-center justify-center gap-2";
-            document.getElementById('btn-tab-cek').className = btnBaseClass;
-            document.getElementById('btn-tab-filter').className = btnBaseClass;
+            document.getElementById('btn-tab-cek').className = "flex-1 md:flex-none px-6 py-2.5 text-sm font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex items-center justify-center gap-2";
+            document.getElementById('btn-tab-filter').className = "flex-1 md:flex-none px-6 py-2.5 text-sm font-medium rounded-lg text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex items-center justify-center gap-2";
             
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            
-            const activeBtnClass = "flex-1 md:flex-none px-6 py-2.5 text-sm font-bold rounded-lg bg-outdoor-accent text-white shadow transition-all flex items-center justify-center gap-2";
-            document.getElementById(`btn-tab-${tabId}`).className = activeBtnClass;
-            
-            if(tabId === 'cek') {
-                setTimeout(() => { document.getElementById('sku-input').focus(); }, 100);
-            }
+            document.getElementById(`btn-tab-${tabId}`).className = "flex-1 md:flex-none px-6 py-2.5 text-sm font-bold rounded-lg bg-outdoor-accent text-white shadow transition-all flex items-center justify-center gap-2";
+            if(tabId === 'cek') setTimeout(() => document.getElementById('sku-input').focus(), 100);
         };
 
         const initFilters = () => {
             let genders = new Set(), mc2s = new Set(), mc3s = new Set(), mc4s = new Set();
             Object.values(masterArtikel).forEach(b => {
-                if(b.gender) genders.add(b.gender);
-                if(b.mc2) mc2s.add(b.mc2);
-                if(b.mc3) mc3s.add(b.mc3);
-                if(b.mc4) mc4s.add(b.mc4);
+                if(b.gender && b.gender !== "-") genders.add(b.gender);
+                if(b.mc2 && b.mc2 !== "-") mc2s.add(b.mc2);
+                if(b.mc3 && b.mc3 !== "-") mc3s.add(b.mc3);
+                if(b.mc4 && b.mc4 !== "-") mc4s.add(b.mc4);
             });
-            
             const populateSelect = (id, set) => {
                 const select = document.getElementById(id);
-                set.forEach(val => {
-                    let opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    select.appendChild(opt);
-                });
+                select.innerHTML = '<option value="">Semua</option>';
+                set.forEach(val => { let opt = document.createElement('option'); opt.value = val; opt.textContent = val; select.appendChild(opt); });
             };
-
             populateSelect('filter-gender', genders);
             populateSelect('filter-mc2', mc2s);
             populateSelect('filter-mc3', mc3s);
             populateSelect('filter-mc4', mc4s);
         };
 
-        // ============================================================================
-        // REQUEST CUST LOGIC (NEW)
-        // ============================================================================
+        // SIDEBAR REQUEST CUST
         const toggleRequestSidebar = (show) => {
             const overlay = document.getElementById('request-overlay');
             const sidebar = document.getElementById('request-sidebar');
-            
             if(show) {
                 overlay.classList.remove('hidden');
                 setTimeout(() => overlay.classList.remove('opacity-0'), 10);
@@ -592,69 +463,46 @@
 
         const updateRequestBadge = () => {
             const badge = document.getElementById('request-badge');
-            const totalItems = Object.values(requestCart).reduce((sum, item) => sum + (item.done ? 0 : item.qty), 0);
-            
-            if(totalItems > 0) {
-                badge.innerText = totalItems;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
+            const total = Object.values(requestCart).reduce((sum, item) => sum + (item.done ? 0 : item.qty), 0);
+            if(total > 0) { badge.innerText = total; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
         };
 
         const renderRequestCart = () => {
             const container = document.getElementById('request-list-container');
             const emptyState = document.getElementById('request-empty');
-            
-            Array.from(container.children).forEach(child => {
-                if(child.id !== 'request-empty') container.removeChild(child);
-            });
+            Array.from(container.children).forEach(child => { if(child.id !== 'request-empty') container.removeChild(child); });
 
-            const skus = Object.keys(requestCart).sort((a, b) => {
-                return (requestCart[a].done === requestCart[b].done) ? 0 : requestCart[a].done ? 1 : -1;
-            });
-
+            const skus = Object.keys(requestCart).sort((a, b) => (requestCart[a].done === requestCart[b].done) ? 0 : requestCart[a].done ? 1 : -1);
             if(skus.length === 0) {
                 emptyState.style.display = 'block';
             } else {
                 emptyState.style.display = 'none';
-                
                 skus.forEach(sku => {
                     const item = requestCart[sku];
                     const bins = masterStokBin[sku] || [];
                     const binString = bins.length > 0 ? bins.map(b => b.binCode).join(', ') : 'TIDAK ADA BIN';
-
                     const isDone = item.done;
-                    const opacityClass = isDone ? 'opacity-50 grayscale' : '';
-                    const borderClass = isDone ? 'border-green-600/50' : 'border-outdoor-700';
 
                     const div = document.createElement('div');
-                    div.className = `bg-outdoor-900 border ${borderClass} rounded-lg p-3 flex justify-between gap-3 items-start hover:border-outdoor-600 transition-all duration-300 shadow-sm ${opacityClass}`;
+                    div.className = `bg-outdoor-900 border ${isDone ? 'border-green-600/50 opacity-50' : 'border-outdoor-700'} rounded-lg p-3 flex justify-between gap-3 items-start shadow-sm`;
                     div.innerHTML = `
                         <div class="flex-1 min-w-0">
                             <p class="font-mono text-outdoor-accent text-sm font-bold ${isDone ? 'line-through text-zinc-500' : ''}">${sku}</p>
                             <p class="text-white text-xs truncate mb-1 ${isDone ? 'line-through text-zinc-500' : ''}" title="${item.desc}">${item.desc}</p>
-                            <div class="flex gap-2 text-[10px] uppercase text-zinc-400">
-                                <span class="bg-outdoor-800 px-1.5 py-0.5 rounded border border-outdoor-700">MC LV4: ${item.mc4 || '-'}</span>
-                            </div>
-                            <p class="text-[11px] text-zinc-500 mt-2 flex items-center gap-1"><i class="fa-solid fa-location-dot"></i> ${binString}</p>
+                            <span class="bg-outdoor-800 px-1.5 py-0.5 rounded border border-outdoor-700 text-[10px] uppercase text-zinc-400">MC LV4: ${item.mc4}</span>
+                            <p class="text-[11px] text-zinc-500 mt-2"><i class="fa-solid fa-location-dot"></i> ${binString}</p>
                         </div>
                         <div class="flex flex-col items-end gap-2">
                             <div class="flex items-center bg-outdoor-800 rounded border border-outdoor-700">
-                                <button onclick="changeRequestQty('${sku}', -1)" class="px-2 py-1 text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-colors rounded-l" ${isDone ? 'disabled' : ''}><i class="fa-solid fa-minus text-[10px]"></i></button>
+                                <button onclick="changeRequestQty('${sku}', -1)" class="px-2 py-1 text-zinc-400 hover:text-white rounded-l" ${isDone?'disabled':''}><i class="fa-solid fa-minus text-[10px]"></i></button>
                                 <span class="px-2 py-1 text-xs font-bold text-white min-w-[24px] text-center">${item.qty}</span>
-                                <button onclick="changeRequestQty('${sku}', 1)" class="px-2 py-1 text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-colors rounded-r" ${isDone ? 'disabled' : ''}><i class="fa-solid fa-plus text-[10px]"></i></button>
+                                <button onclick="changeRequestQty('${sku}', 1)" class="px-2 py-1 text-zinc-400 hover:text-white rounded-r" ${isDone?'disabled':''}><i class="fa-solid fa-plus text-[10px]"></i></button>
                             </div>
                             <div class="flex gap-2 mt-1">
-                                <button onclick="markRequestDone('${sku}')" class="${isDone ? 'text-green-500 hover:text-zinc-400' : 'text-zinc-400 hover:text-green-500'} transition-colors text-xs p-1 font-medium" title="Tandai Selesai">
-                                    <i class="fa-solid fa-check"></i> ${isDone ? 'Batal' : 'Done'}
-                                </button>
-                                <button onclick="removeFromRequest('${sku}')" class="text-zinc-500 hover:text-red-400 transition-colors text-xs p-1" title="Hapus">
-                                    <i class="fa-solid fa-trash-can"></i> Hapus
-                                </button>
+                                <button onclick="markRequestDone('${sku}')" class="${isDone?'text-green-500':'text-zinc-400'} text-xs p-1"><i class="fa-solid fa-check"></i> ${isDone?'Batal':'Done'}</button>
+                                <button onclick="removeFromRequest('${sku}')" class="text-zinc-500 hover:text-red-400 text-xs p-1"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                     container.appendChild(div);
                 });
             }
@@ -662,76 +510,23 @@
         };
 
         const addToRequest = (sku) => {
-            const artikel = masterArtikel[sku];
-            if(!artikel) return;
-
-            if(requestCart[sku]) {
-                requestCart[sku].qty += 1;
-                requestCart[sku].done = false;
-            } else {
-                requestCart[sku] = {
-                    desc: artikel.desc,
-                    mc4: artikel.mc4 || '-',
-                    warna: artikel.warna || '-',
-                    size: artikel.size || '-',
-                    qty: 1,
-                    done: false
-                };
-            }
-            
+            const art = masterArtikel[sku];
+            if(!art) return;
+            if(requestCart[sku]) { requestCart[sku].qty += 1; requestCart[sku].done = false; }
+            else { requestCart[sku] = { desc: art.desc, mc4: art.mc4||'-', qty: 1, done: false }; }
             showToast(`${sku} dimasukkan ke Request Cust!`, "success");
             renderRequestCart();
-            
-            const iconBadge = document.getElementById('request-badge');
-            iconBadge.classList.add('animate-ping');
-            setTimeout(() => iconBadge.classList.remove('animate-ping'), 300);
         };
 
-        const markRequestDone = (sku) => {
-            if(requestCart[sku]) {
-                requestCart[sku].done = !requestCart[sku].done;
-                renderRequestCart();
-                if(requestCart[sku].done) {
-                    showToast("Barang ditandai selesai diambil.", "success");
-                }
-            }
-        };
+        const markRequestDone = (sku) => { if(requestCart[sku]) { requestCart[sku].done = !requestCart[sku].done; renderRequestCart(); } };
+        const changeRequestQty = (sku, delta) => { if(requestCart[sku]) { requestCart[sku].qty += delta; if(requestCart[sku].qty <= 0) delete requestCart[sku]; renderRequestCart(); } };
+        const removeFromRequest = (sku) => { delete requestCart[sku]; renderRequestCart(); };
+        const clearRequestCart = () => { if(confirm("Kosongkan daftar request?")) { requestCart = {}; renderRequestCart(); } };
 
-        const changeRequestQty = (sku, delta) => {
-            if(requestCart[sku]) {
-                requestCart[sku].qty += delta;
-                if(requestCart[sku].qty <= 0) {
-                    delete requestCart[sku];
-                }
-                renderRequestCart();
-            }
-        };
-
-        const removeFromRequest = (sku) => {
-            delete requestCart[sku];
-            renderRequestCart();
-        };
-
-        const clearRequestCart = () => {
-            if(Object.keys(requestCart).length === 0) return;
-            if(confirm("Apakah Anda yakin ingin mengosongkan semua daftar request?")) {
-                requestCart = {};
-                renderRequestCart();
-                showToast("Daftar request dikosongkan.", "success");
-            }
-        };
-
-        // ============================================================================
-        // FILTER & SEARCH LOGIC
-        // ============================================================================
-        const resetFilter = () => {
-            document.getElementById('filter-form').reset();
-            document.getElementById('filter-result-section').classList.add('hidden');
-        };
-
+        // FILTER LOGIC
+        const resetFilter = () => { document.getElementById('filter-form').reset(); document.getElementById('filter-result-section').classList.add('hidden'); };
         document.getElementById('filter-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            
             const pGender = document.getElementById('filter-gender').value.toLowerCase();
             const pMc2 = document.getElementById('filter-mc2').value.toLowerCase();
             const pMc3 = document.getElementById('filter-mc3').value.toLowerCase();
@@ -742,145 +537,77 @@
             const pNew = document.getElementById('filter-new').value;
 
             let results = [];
-
             Object.values(masterArtikel).forEach(item => {
-                const matchGender = !pGender || (item.gender && item.gender.toLowerCase() === pGender);
-                const matchMc2 = !pMc2 || (item.mc2 && item.mc2.toLowerCase() === pMc2);
-                const matchMc3 = !pMc3 || (item.mc3 && item.mc3.toLowerCase() === pMc3);
-                const matchMc4 = !pMc4 || (item.mc4 && item.mc4.toLowerCase() === pMc4);
-                const matchWarna = !pWarna || (item.warna && item.warna.toLowerCase().includes(pWarna));
-                const matchSize = !pSize || (item.size && item.size.toLowerCase() === pSize);
-
-                const hasPromo = masterPromo[item.sku] && masterPromo[item.sku].length > 0;
-                const matchPromo = !pPromo || (pPromo === 'diskon' && hasPromo);
-
-                const isNew = masterNewArrival[item.sku];
-                const matchNew = !pNew || (pNew === 'new' && isNew);
-
-                if(matchGender && matchMc2 && matchMc3 && matchMc4 && matchWarna && matchSize && matchPromo && matchNew) {
-                    results.push(item);
-                }
+                if(pGender && item.gender.toLowerCase() !== pGender) return;
+                if(pMc2 && item.mc2.toLowerCase() !== pMc2) return;
+                if(pMc3 && item.mc3.toLowerCase() !== pMc3) return;
+                if(pMc4 && item.mc4.toLowerCase() !== pMc4) return;
+                if(pWarna && !item.warna.toLowerCase().includes(pWarna)) return;
+                if(pSize && item.size.toLowerCase() !== pSize) return;
+                if(pPromo && (!masterPromo[item.sku] || masterPromo[item.sku].length === 0)) return;
+                if(pNew && !masterNewArrival[item.sku]) return;
+                results.push(item);
             });
 
             const tbody = document.getElementById('filter-result-body');
-            const resultSection = document.getElementById('filter-result-section');
-            const countLabel = document.getElementById('filter-count');
-            
             tbody.innerHTML = '';
-            
-            if(results.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-zinc-500">Tidak ada stok yang sesuai dengan filter.</td></tr>`;
-            } else {
-                results.forEach(r => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-outdoor-800 transition-colors";
-                    
-                    let statusTags = "";
-                    if(masterNewArrival[r.sku]) statusTags += `<span class="bg-blue-900/60 text-blue-300 text-[10px] px-1.5 py-0.5 rounded mr-1 border border-blue-800">NEW</span>`;
-                    if(masterPromo[r.sku] && masterPromo[r.sku].length > 0) statusTags += `<span class="bg-amber-900/60 text-amber-500 text-[10px] px-1.5 py-0.5 rounded border border-amber-800">PROMO</span>`;
-                    
-                    tr.innerHTML = `
-                        <td class="px-4 py-3 font-mono text-outdoor-accent whitespace-nowrap">${r.sku}</td>
-                        <td class="px-4 py-3 text-white whitespace-nowrap">${r.desc}</td>
-                        <td class="px-4 py-3">${r.warna || '-'}</td>
-                        <td class="px-4 py-3 font-bold">${r.size || '-'}</td>
-                        <td class="px-4 py-3 text-xs text-zinc-400">${r.mc4 || '-'}</td>
-                        <td class="px-4 py-3 text-center">${statusTags || '-'}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-            
-            countLabel.innerText = `Menampilkan ${results.length} varian`;
-            resultSection.classList.remove('hidden');
+            results.forEach(r => {
+                let statusTags = "";
+                if(masterNewArrival[r.sku]) statusTags += `<span class="bg-blue-900/60 text-blue-300 text-[10px] px-1.5 py-0.5 rounded mr-1">NEW</span>`;
+                if(masterPromo[r.sku]) statusTags += `<span class="bg-amber-900/60 text-amber-500 text-[10px] px-1.5 py-0.5 rounded">PROMO</span>`;
+                tbody.innerHTML += `<tr class="hover:bg-outdoor-800"><td class="px-4 py-3 font-mono text-outdoor-accent">${r.sku}</td><td class="px-4 py-3 text-white">${r.desc}</td><td class="px-4 py-3">${r.warna}</td><td class="px-4 py-3 font-bold">${r.size}</td><td class="px-4 py-3 text-xs text-zinc-400">${r.mc4}</td><td class="px-4 py-3 text-center">${statusTags||'-'}</td></tr>`;
+            });
+            document.getElementById('filter-count').innerText = `Menampilkan ${results.length} varian`;
+            document.getElementById('filter-result-section').classList.remove('hidden');
         });
 
-        // ============================================================================
-        // FORM PENGECEKAN LOGIC
-        // ============================================================================
+        // FORM PENGECEKAN STOK
         const inputSku = document.getElementById('sku-input');
-        
         const resetFormCek = () => {
-            const inputField = document.getElementById('sku-input');
-            inputField.value = '';
+            inputSku.value = '';
             document.getElementById('check-result-section').classList.add('hidden');
             document.getElementById('check-result-body').innerHTML = '';
-            
-            const hint = document.getElementById('sku-hint');
-            hint.innerText = "Ketik/scan SKU Code untuk memunculkan detail barang dan lokasi bin.";
-            hint.className = "text-xs text-zinc-500 mt-1";
-            
-            inputField.focus();
+            document.getElementById('sku-hint').innerText = "Ketik/scan SKU Code untuk memunculkan detail barang dan lokasi bin.";
+            inputSku.focus();
         };
 
         const renderCheckRowHTML = (barang) => {
-            const isNewArrival = masterNewArrival[barang.sku] ? `<span class="shrink-0 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">NEW</span>` : '';
-
+            const isNewArrival = masterNewArrival[barang.sku] ? `<span class="shrink-0 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">NEW</span>` : '';
             const bins = masterStokBin[barang.sku] || [];
-            let binString = '-';
-            let totalQty = 0;
-            if (bins.length > 0) {
-                binString = bins.map(b => b.binCode).join(' | ');
-                totalQty = bins.reduce((sum, b) => sum + b.qty, 0);
-            }
+            let binString = bins.length > 0 ? bins.map(b => b.binCode).join(' | ') : 'BELUM ADA BIN';
+            let totalQty = bins.reduce((sum, b) => sum + b.qty, 0);
 
             const hargaGross = barang.locAmount || 0;
-            let hargaNetto = hargaGross;
-            let totalDiskon = 0;
-            let promoText = '-';
-            let programName = '-';
-            
+            let hargaNetto = hargaGross, totalDiskon = 0, promoText = '-', programName = '-';
             const promos = masterPromo[barang.sku];
             if (promos && promos.length > 0) {
-                // Cari promo dengan persentase tertinggi untuk kalkulasi finansial
                 const percentagePromos = promos.filter(p => p.persentase > 0);
-                const highestPromo = percentagePromos.length > 0 
-                    ? percentagePromos.reduce((prev, current) => (prev.persentase > current.persentase) ? prev : current)
-                    : promos[0]; // Ambil promo pertama jika semuanya non-persentase (gift/event)
-
+                const highestPromo = percentagePromos.length > 0 ? percentagePromos.reduce((prev, current) => (prev.persentase > current.persentase) ? prev : current) : promos[0];
                 if (highestPromo.persentase > 0) {
                     totalDiskon = hargaGross * (highestPromo.persentase / 100);
                     hargaNetto = hargaGross - totalDiskon;
                     promoText = `<span class="bg-amber-900/40 border border-amber-800 text-amber-500 px-1.5 py-0.5 rounded">${highestPromo.persentase}%</span>`;
                 } else {
-                    promoText = `<span class="bg-purple-900/40 border border-purple-800 text-purple-300 px-1.5 py-0.5 rounded text-[10px]">EVENT</span>`;
+                    promoText = `<span class="bg-purple-900/40 text-purple-300 px-1.5 py-0.5 rounded text-[10px]">EVENT</span>`;
                 }
-                
-                // Gabungkan nama program jika ada banyak program aktif pada SKU tersebut
                 programName = promos.map(p => p.nama).join(', ');
             }
 
             const tr = document.createElement('tr');
             tr.className = "hover:bg-outdoor-700/40 transition-colors";
-            
             tr.innerHTML = `
-                <td class="px-3 py-3 text-center">
-                    <button onclick="addToRequest('${barang.sku}')" class="bg-outdoor-700 hover:bg-outdoor-accent text-zinc-300 hover:text-white w-7 h-7 rounded transition-colors shadow flex items-center justify-center" title="Tambah ke Daftar Request">
-                        <i class="fa-solid fa-plus text-xs"></i>
-                    </button>
-                </td>
+                <td class="px-3 py-3 text-center"><button onclick="addToRequest('${barang.sku}')" class="bg-outdoor-700 hover:bg-outdoor-accent text-white w-7 h-7 rounded flex items-center justify-center"><i class="fa-solid fa-plus text-xs"></i></button></td>
                 <td class="px-4 py-3 font-mono text-zinc-300 font-medium">${barang.sku}</td>
-                
-                <td class="px-4 py-3">
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium text-white" title="${barang.desc}">${barang.desc}</span>
-                        ${isNewArrival}
-                    </div>
-                </td>
-
-                <td class="px-4 py-3 text-zinc-400">${barang.mc2 || '-'}</td>
-                <td class="px-4 py-3 text-zinc-400">${barang.mc3 || '-'}</td>
-                <td class="px-4 py-3 text-zinc-400">${barang.mc4 || '-'}</td>
-                <td class="px-4 py-3 font-mono text-outdoor-accent font-medium">${binString === '-' ? 'BELUM ADA BIN' : binString}</td>
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><span class="font-medium text-white">${barang.desc}</span>${isNewArrival}</div></td>
+                <td class="px-4 py-3 text-zinc-400">${barang.mc2}</td><td class="px-4 py-3 text-zinc-400">${barang.mc3}</td><td class="px-4 py-3 text-zinc-400">${barang.mc4}</td>
+                <td class="px-4 py-3 font-mono text-outdoor-accent font-medium">${binString}</td>
                 <td class="px-4 py-3 text-center font-bold text-white text-lg">${totalQty}</td>
-                <td class="px-4 py-3 text-zinc-300">${barang.warna || '-'}</td>
-                <td class="px-4 py-3 font-bold text-white">${barang.size || '-'}</td>
+                <td class="px-4 py-3 text-zinc-300">${barang.warna}</td><td class="px-4 py-3 font-bold text-white">${barang.size}</td>
                 <td class="px-4 py-3 text-right font-mono text-zinc-400">${formatRupiah(hargaGross)}</td>
                 <td class="px-4 py-3 text-right font-mono font-bold text-outdoor-success">${formatRupiah(hargaNetto)}</td>
-                <td class="px-4 py-3 text-sm text-zinc-300 font-semibold text-amber-400">${programName}</td>
+                <td class="px-4 py-3 text-sm text-amber-400 font-semibold">${programName}</td>
                 <td class="px-4 py-3 text-center font-mono text-xs">${promoText}</td>
-                <td class="px-4 py-3 text-right font-mono text-red-400">${totalDiskon > 0 ? `-${formatRupiah(totalDiskon)}` : "-"}</td>
-            `;
+                <td class="px-4 py-3 text-right font-mono text-red-400">${totalDiskon > 0 ? `-${formatRupiah(totalDiskon)}` : "-"}</td>`;
             return tr;
         };
 
@@ -889,221 +616,129 @@
             const hint = document.getElementById('sku-hint');
             const resultSect = document.getElementById('check-result-section');
             const tbody = document.getElementById('check-result-body');
-            
             if (kode === '') { resetFormCek(); return; }
 
-            let baseSku = kode;
-            if (masterArtikel[kode] || kode.length >= 9) {
-                baseSku = kode.substring(0, 9);
-            }
-
+            let baseSku = kode.length >= 9 ? kode.substring(0, 9) : kode;
             const matchedArticles = Object.values(masterArtikel).filter(item => item.sku.startsWith(baseSku));
             
             if (matchedArticles.length > 0) {
                 resultSect.classList.remove('hidden');
-                tbody.innerHTML = ''; 
-                
-                let isExactMatch = false;
-                matchedArticles.forEach((barang) => {
-                    if (barang.sku === kode) isExactMatch = true;
-                    tbody.appendChild(renderCheckRowHTML(barang));
-                });
-                
-                if (isExactMatch) {
-                    hint.innerText = `✓ Menampilkan seluruh ketersediaan varian untuk artikel generik ini.`;
-                    hint.className = "text-xs text-green-500 mt-1";
-                } else {
-                    hint.innerText = `✓ Menampilkan varian berdasarkan potongan kode "${baseSku}".`;
-                    hint.className = "text-xs text-blue-400 mt-1";
-                }
+                tbody.innerHTML = '';
+                matchedArticles.forEach(b => tbody.appendChild(renderCheckRowHTML(b)));
+                hint.innerText = `✓ Menampilkan seluruh ketersediaan varian untuk artikel generik "${baseSku}".`;
+                hint.className = "text-xs text-green-500 mt-1";
             } else {
                 resultSect.classList.add('hidden');
-                
-                if (kode.length >= 9) {
-                    hint.innerText = "⚠ SKU Code atau model artikel tidak ditemukan.";
-                    hint.className = "text-xs text-amber-500 mt-1";
-                } else {
-                    hint.innerText = "Mencari artikel... (Ketik minimal 9 digit SKU)";
-                    hint.className = "text-xs text-zinc-500 mt-1";
-                }
+                hint.innerText = "⚠ SKU Code atau model artikel tidak ditemukan.";
+                hint.className = "text-xs text-amber-500 mt-1";
             }
         });
 
-        // ============================================================================
-        // SCANNER KAMERA LOGIC (SUPER CEPAT)
-        // ============================================================================
+        // SCANNER KAMERA
         let html5QrCode = null;
-
         const startScanner = () => {
-            const scannerModal = document.getElementById('scanner-modal');
-            scannerModal.classList.remove('hidden');
-
-            if (!html5QrCode) {
-                html5QrCode = new Html5Qrcode("reader");
-            }
-
-            const config = { 
-                fps: 30, 
-                qrbox: { width: 280, height: 100 }, 
-                aspectRatio: 1.0,
-                formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8, Html5QrcodeSupportedFormats.UPC_A ]
-            };
-
-            html5QrCode.start(
-                { facingMode: "environment" },
-                config,
-                (decodedText, decodedResult) => {
-                    if(window.navigator.vibrate) window.navigator.vibrate(100);
-                    const inputField = document.getElementById('sku-input');
-                    inputField.value = decodedText;
-                    stopScanner();
-                    inputField.dispatchEvent(new Event('input'));
-                    showToast(`Barcode ${decodedText} terscan!`, "success");
-                },
-                (errorMessage) => {}
-            ).catch((err) => {
-                showToast("Gagal mengakses kamera. Pastikan browser memiliki izin akses kamera.", "error");
+            document.getElementById('scanner-modal').classList.remove('hidden');
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 30, qrbox: { width: 280, height: 100 } }, (decodedText) => {
+                if(window.navigator.vibrate) window.navigator.vibrate(100);
+                inputSku.value = decodedText;
                 stopScanner();
-            });
+                inputSku.dispatchEvent(new Event('input'));
+                showToast(`Barcode ${decodedText} terscan!`, "success");
+            }, () => {}).catch(() => { showToast("Gagal akses kamera.", "error"); stopScanner(); });
         };
-
         const stopScanner = () => {
-            const scannerModal = document.getElementById('scanner-modal');
-            scannerModal.classList.add('hidden');
-            
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => {}).catch(err => {
-                    console.error("Gagal mematikan scanner", err);
-                });
-            }
+            document.getElementById('scanner-modal').classList.add('hidden');
+            if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().catch(() => {});
         };
 
-        // ============================================================================
-        // UPDATE MASTER MODAL LOGIC 
-        // ============================================================================
+        // UPDATE MASTER MODAL & TAB SWITCHING BERSIH
         const toggleMasterModal = (show) => {
             const modal = document.getElementById('master-modal');
             const content = document.getElementById('master-modal-content');
             if(show) {
                 modal.classList.remove('hidden');
-                setTimeout(() => {
-                    content.classList.remove('scale-95', 'opacity-0');
-                    content.classList.add('scale-100', 'opacity-100');
-                }, 10);
+                setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
             } else {
-                content.classList.remove('scale-100', 'opacity-100');
-                content.classList.add('scale-95', 'opacity-0');
+                content.classList.remove('scale-100', 'opacity-100'); content.classList.add('scale-95', 'opacity-0');
                 setTimeout(() => modal.classList.add('hidden'), 300);
             }
         };
 
         const switchMasterTab = (tab) => {
+            // Simpan teks saat ini ke buffer tab aktif sebelum berpindah
+            const currentTab = document.getElementById('active-master-tab').value;
+            tabPasteBuffers[currentTab] = document.getElementById('paste-area').value;
+
             document.getElementById('active-master-tab').value = tab;
             
-            const baseClass = "py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2";
             ['bin', 'artikel', 'promo', 'new_arrival'].forEach(t => {
-                document.getElementById(`btn-m-${t}`).className = baseClass;
+                document.getElementById(`btn-m-${t}`).className = "py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-white hover:bg-outdoor-700 transition-all flex justify-center items-center gap-2";
             });
-            
             document.getElementById(`btn-m-${tab}`).className = "py-2 text-sm font-bold rounded-md bg-outdoor-accent text-white shadow transition-all flex justify-center items-center gap-2";
 
             const promoContainer = document.getElementById('promo-program-container');
+            if(tab === 'promo') promoContainer.classList.remove('hidden'); else promoContainer.classList.add('hidden');
+
             const textarea = document.getElementById('paste-area');
-            
-            if(tab === 'promo') {
-                promoContainer.classList.remove('hidden');
-            } else {
-                promoContainer.classList.add('hidden');
-            }
+            const hintText = document.getElementById('paste-hint-text');
+
+            // Munculkan teks dari buffer tab tersebut agar tidak tercampur dan tampilannya sesuai
+            textarea.value = tabPasteBuffers[tab] || "";
 
             if(tab === 'bin') {
-                textarea.placeholder = "Copy data dari Excel lalu paste di sini...\n\nFormat Kolom (Header tidak wajib):\nSKU Code | Bin Code | Qty";
+                textarea.placeholder = "SKU Code | Bin Code | Qty\nCth: 910000005001\tA-01-01\t5";
+                hintText.innerText = "*Format baris: SKU Code | Bin Code | Qty";
             } else if (tab === 'artikel') {
-                textarea.placeholder = "Copy data dari Excel lalu paste di sini...\n\nFormat Kolom (Header tidak wajib):\nSKU Code | Cross-Site | SKU Description | MC Lv2 | MC Lv3 | MC Lv4 | Loc Amount | Gender";
+                textarea.placeholder = "SKU Code | Cross-Site | SKU Description | MC Lv2 | MC Lv3 | MC Lv4 | Loc Amount | Gender";
+                hintText.innerText = "*Format baris: SKU Code | Cross-Site | SKU Description | MC Lv2 | MC Lv3 | MC Lv4 | Harga | Gender";
             } else if (tab === 'promo') {
-                textarea.placeholder = "Copy data dari Excel lalu paste di sini...\n\nFormat Kolom (Header tidak wajib):\nSKU Code | Persentase (0 jika non-diskon) | Nama Program Promo";
+                textarea.placeholder = "SKU Code | Persentase (0 jika non-diskon) | Nama Program Promo";
+                hintText.innerText = "*Format baris: SKU Code | Persentase | Nama Program Promo";
             } else if (tab === 'new_arrival') {
-                textarea.placeholder = "Copy data dari Excel lalu paste di sini...\n\nFormat Kolom (Header tidak wajib):\nSKU Code\n\n*(Cukup paste SKU Code-nya saja ke bawah. Barang akan otomatis ditandai sebagai New Arrival)*";
+                textarea.placeholder = "SKU Code (Cukup paste SKU Code-nya saja per baris)";
+                hintText.innerText = "*Cukup 1 kolom SKU Code per baris.";
             }
         };
 
         const deleteCurrentPromoProgram = () => {
             const select = document.getElementById('promo-program-select');
             const val = select.value;
-            
-            const defaultPrograms = ["Diskon Bertingkat", "Clearance Sale", "Promo Member", "Promo Kemerdekaan", "Event Spesial / Gift", "Lainnya"];
-            if (defaultPrograms.includes(val) && val !== "Lainnya") {
+            if (["Diskon Bertingkat", "Clearance Sale", "Promo Member", "Promo Kemerdekaan", "Event Spesial / Gift"].includes(val)) {
                 showToast(`Program sistem "${val}" tidak dapat dihapus.`, "error");
                 return;
             }
-
-            if (confirm(`Apakah Anda yakin ingin menghapus program promo "${val}" beserta seluruh relasinya dari sistem?`)) {
+            if (confirm(`Hapus program promo "${val}"?`)) {
                 Object.keys(masterPromo).forEach(sku => {
                     masterPromo[sku] = masterPromo[sku].filter(p => p.nama !== val);
                     if(masterPromo[sku].length === 0) delete masterPromo[sku];
                 });
-
-                // Hapus opsi dari dropdown
                 for (let i = 0; i < select.options.length; i++) {
-                    if (select.options[i].value === val) {
-                        select.remove(i);
-                        break;
-                    }
+                    if (select.options[i].value === val) { select.remove(i); break; }
                 }
                 select.value = "Diskon Bertingkat";
-                showToast(`Program promo "${val}" berhasil dihapus.`, "success");
-                
-                const currentCek = document.getElementById('sku-input').value.toUpperCase();
-                if(currentCek) document.getElementById('sku-input').dispatchEvent(new Event('input'));
+                showToast("Program promo dihapus.", "success");
             }
         };
 
-        const processPastedData = () => {
+        const processPastedData = async () => {
             const rawText = document.getElementById('paste-area').value.trim();
-            if(!rawText) {
-                showToast("Data masih kosong!", "error");
-                return;
-            }
+            if(!rawText) { showToast("Data masih kosong!", "error"); return; }
 
             const activeTab = document.getElementById('active-master-tab').value;
             const rows = rawText.split('\n');
-            let validCount = 0;
+            let cloudPayload = [];
 
             if(activeTab === 'promo') {
                 let selectedProgramName = document.getElementById('promo-program-select').value;
-                
-                // Jika user melampirkan kolom ketiga sebagai nama program langsung dari Excel, tangkap nama tersebut
                 let detectedCustomName = "";
                 for(let i=0; i<Math.min(rows.length, 3); i++) {
                     const cols = rows[i].split('\t');
-                    if(cols.length >= 3 && cols[2].trim() !== '') {
-                        detectedCustomName = cols[2].trim();
-                        break;
-                    }
+                    if(cols.length >= 3 && cols[2].trim() !== '') { detectedCustomName = cols[2].trim(); break; }
                 }
+                if (selectedProgramName === "Lainnya" && detectedCustomName) selectedProgramName = detectedCustomName;
 
-                if (selectedProgramName === "Lainnya" && detectedCustomName) {
-                    selectedProgramName = detectedCustomName;
-                }
-
-                // Tambahkan secara dinamis ke dropdown jika belum ada
-                const selectElem = document.getElementById('promo-program-select');
-                let optionExists = false;
-                for(let i=0; i<selectElem.options.length; i++) {
-                    if(selectElem.options[i].value === selectedProgramName) {
-                        optionExists = true;
-                        break;
-                    }
-                }
-                if(!optionExists && selectedProgramName && selectedProgramName !== "Lainnya") {
-                    let newOpt = document.createElement('option');
-                    newOpt.value = selectedProgramName;
-                    newOpt.textContent = selectedProgramName;
-                    selectElem.insertBefore(newOpt, selectElem.lastElementChild); // Sisipkan sebelum "Lainnya"
-                    selectElem.value = selectedProgramName;
-                }
-
-                // Hapus hanya data promo dengan nama program ini agar tidak menimpa program lain
+                // Update lokal
                 Object.keys(masterPromo).forEach(sku => {
                     masterPromo[sku] = masterPromo[sku].filter(p => p.nama !== selectedProgramName);
                     if(masterPromo[sku].length === 0) delete masterPromo[sku];
@@ -1111,76 +746,88 @@
 
                 rows.forEach((row, index) => {
                     const cols = row.split('\t');
-                    if(index === 0 && (cols[0].toLowerCase().includes('sku') || cols[0].toLowerCase().includes('kode'))) return;
-
+                    if(index === 0 && cols[0].toLowerCase().includes('sku')) return;
                     if(cols.length >= 1 && cols[0].trim() !== '') {
-                        const kode = cols[0].trim().toUpperCase();
+                        const sku = cols[0].trim().toUpperCase();
                         const persentase = cols.length >= 2 ? (parseInt(cols[1].trim().replace(/\D/g,'')) || 0) : 0;
-                        const namaProgram = cols.length >= 3 && cols[2].trim() !== '' ? cols[2].trim() : selectedProgramName;
+                        const nama = cols.length >= 3 && cols[2].trim() !== '' ? cols[2].trim() : selectedProgramName;
 
-                        if(!masterPromo[kode]) masterPromo[kode] = [];
-                        masterPromo[kode].push({ persentase: persentase, nama: namaProgram });
-                        validCount++;
+                        if(!masterPromo[sku]) masterPromo[sku] = [];
+                        masterPromo[sku].push({ persentase, nama });
                     }
                 });
-            } else {
-                rows.forEach((row, index) => {
-                    const cols = row.split('\t'); 
-                    if(index === 0 && (cols[0].toLowerCase().includes('sku') || cols[0].toLowerCase().includes('kode'))) return; 
-                    
-                    if(activeTab === 'bin' && cols.length >= 3) {
-                        const kode = cols[0].trim().toUpperCase();
-                        if(!masterStokBin[kode]) masterStokBin[kode] = [];
-                        
-                        masterStokBin[kode].push({ binCode: cols[1].trim().toUpperCase(), qty: parseInt(cols[2].trim()) || 0 });
-                        validCount++;
-                    }
-                    
-                    if(activeTab === 'new_arrival' && cols.length >= 1 && cols[0].trim() !== '') {
-                        const kode = cols[0].trim().toUpperCase();
-                        masterNewArrival[kode] = true;
-                        validCount++;
-                    }
-                    
-                    if(activeTab === 'artikel' && cols.length >= 8) {
-                        const kode = cols[0].trim().toUpperCase();
-                        const descText = cols[2].trim();
-                        const descParts = descText.split(',');
-                        const warnaExtracted = descParts.length > 1 ? descParts[1].trim() : "-";
-                        const sizeExtracted = descParts.length > 2 ? descParts[2].trim() : "-";
 
-                        masterArtikel[kode] = {
-                            sku: kode,
-                            crossSite: cols[1].trim(),
-                            desc: descText,
-                            mc2: cols[3].trim(),
-                            mc3: cols[4].trim(),
-                            mc4: cols[5].trim(),
-                            locAmount: parseInt(cols[6].trim().replace(/,/g, '').replace(/\./g, '')) || 0, 
-                            gender: cols[7].trim(),
-                            warna: warnaExtracted,
-                            size: sizeExtracted
+                // Bungkus array untuk dikirim ke cloud
+                for(let sku in masterPromo) {
+                    masterPromo[sku].forEach(p => cloudPayload.push({ sku, persentase: p.persentase, nama: p.nama }));
+                }
+
+            } else if(activeTab === 'bin') {
+                masterStokBin = {};
+                rows.forEach((row, index) => {
+                    const cols = row.split('\t');
+                    if(index === 0 && cols[0].toLowerCase().includes('sku')) return;
+                    if(cols.length >= 3 && cols[0].trim() !== '') {
+                        const sku = cols[0].trim().toUpperCase();
+                        const binCode = cols[1].trim().toUpperCase();
+                        const qty = parseInt(cols[2].trim()) || 0;
+                        if(!masterStokBin[sku]) masterStokBin[sku] = [];
+                        masterStokBin[sku].push({ binCode, qty });
+                        cloudPayload.push({ sku, binCode, qty });
+                    }
+                });
+
+            } else if(activeTab === 'new_arrival') {
+                rows.forEach((row, index) => {
+                    const cols = row.split('\t');
+                    if(cols[0] && cols[0].trim() !== '') {
+                        const sku = cols[0].trim().toUpperCase();
+                        masterNewArrival[sku] = true;
+                        cloudPayload.push(sku);
+                    }
+                });
+
+            } else if(activeTab === 'artikel') {
+                rows.forEach((row, index) => {
+                    const cols = row.split('\t');
+                    if(index === 0 && cols[0].toLowerCase().includes('sku')) return;
+                    if(cols.length >= 8 && cols[0].trim() !== '') {
+                        const sku = cols[0].trim().toUpperCase();
+                        const desc = cols[2].trim();
+                        const descParts = desc.split(',');
+                        const item = {
+                            sku: sku, crossSite: cols[1].trim(), desc: desc,
+                            mc2: cols[3].trim(), mc3: cols[4].trim(), mc: cols[5].trim(),
+                            price: parseInt(cols[6].trim().replace(/,/g, '').replace(/\./g, '')) || 0,
+                            gender: cols[7].trim()
                         };
-                        validCount++;
+                        masterArtikel[sku] = {
+                            sku: sku, crossSite: item.crossSite, desc: desc,
+                            mc2: item.mc2, mc3: item.mc3, mc4: item.mc,
+                            locAmount: item.price, gender: item.gender,
+                            warna: descParts.length > 1 ? descParts[1].trim() : "-",
+                            size: descParts.length > 2 ? descParts[2].trim() : "-"
+                        };
+                        cloudPayload.push(item);
                     }
                 });
             }
 
-            setTimeout(() => {
-                showToast(`Berhasil memperbarui ${validCount} baris data ${activeTab.toUpperCase()}.`, "success");
+            // Kirim dan sinkronkan ke Google Spreadsheet
+            const success = await syncToCloud(activeTab, cloudPayload);
+            if(success) {
+                tabPasteBuffers[activeTab] = ""; // Kosongkan buffer jika berhasil
+                document.getElementById('paste-area').value = "";
                 toggleMasterModal(false);
-                
-                const currentCek = document.getElementById('sku-input').value.toUpperCase();
-                if(currentCek) document.getElementById('sku-input').dispatchEvent(new Event('input'));
-            }, 800);
+                const currentCek = inputSku.value.toUpperCase();
+                if(currentCek) inputSku.dispatchEvent(new Event('input'));
+            }
         };
 
-        // On Load
         document.addEventListener('DOMContentLoaded', () => {
-            loadMasterData(); 
-            document.getElementById('sku-input').focus();
+            loadAllMasters();
+            inputSku.focus();
         });
-
     </script>
 </body>
 </html>
