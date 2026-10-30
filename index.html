@@ -15,13 +15,8 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         outdoor: {
-                            900: '#18181b',
-                            800: '#27272a',
-                            700: '#3f3f46',
-                            accent: '#d97706',
-                            accentHover: '#b45309',
-                            success: '#059669',
-                            new: '#2563eb',
+                            900: '#18181b', 800: '#27272a', 700: '#3f3f46',
+                            accent: '#d97706', accentHover: '#b45309', success: '#059669', new: '#2563eb',
                         }
                     }
                 }
@@ -36,8 +31,8 @@
         .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        #toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
-        .toast { padding: 1rem 1.5rem; border-radius: 0.5rem; color: white; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); animation: slideInDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards; display: flex; align-items: center; gap: 0.75rem; }
+        #toast-container { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
+        .toast { padding: 1rem 1.5rem; border-radius: 0.5rem; color: white; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); animation: slideInDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 3.7s forwards; display: flex; align-items: center; gap: 0.75rem; }
         @keyframes slideInDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         #request-sidebar { transition: transform 0.3s ease-in-out; }
@@ -45,10 +40,11 @@
 </head>
 <body class="bg-outdoor-900 text-zinc-300 font-sans min-h-screen selection:bg-outdoor-accent selection:text-white overflow-x-hidden">
 
+    <!-- Loading Screen (Hanya muncul saat ditarik dari Spreadsheet) -->
     <div id="loading-overlay" class="fixed inset-0 z-[110] bg-outdoor-900/95 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity duration-300">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-outdoor-accent mb-4"></div>
-        <p class="text-white font-medium animate-pulse text-lg">Menghubungkan ke Spreadsheet...</p>
-        <p class="text-zinc-500 text-sm mt-2">Sinkronisasi data secepat kilat</p>
+        <p class="text-white font-medium animate-pulse text-lg" id="loading-text">Menarik Data dari Spreadsheet...</p>
+        <p class="text-zinc-500 text-sm mt-2">Mohon tunggu, memastikan data 100% akurat.</p>
     </div>
 
     <div id="toast-container"></div>
@@ -272,7 +268,7 @@
 
                 <div class="pt-6 flex justify-between gap-4">
                     <button type="button" onclick="toggleMasterModal(false)" class="px-6 py-2.5 rounded-lg bg-outdoor-800 border border-outdoor-700 text-zinc-300 hover:bg-outdoor-700 transition-colors font-medium">Batal</button>
-                    <button type="button" onclick="processPastedData()" class="px-6 py-2.5 rounded-lg bg-outdoor-accent hover:bg-outdoor-accentHover text-white font-bold shadow-lg transition-colors flex justify-center items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> Simpan & Sinkronkan</button>
+                    <button type="button" id="btn-save-master" onclick="processPastedData()" class="px-6 py-2.5 rounded-lg bg-outdoor-accent hover:bg-outdoor-accentHover text-white font-bold shadow-lg transition-colors flex justify-center items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> Simpan & Sinkronkan</button>
                 </div>
             </div>
         </div>
@@ -295,65 +291,45 @@
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec"; 
 
+        // Data Session RAM (Sistem murni bergantung pada RAM sementara, tidak disimpan permanen di HP)
         let masterArtikel = {};
         let masterStokBin = {};
         let masterPromo = {};
         let masterNewArrival = {};
         let requestCart = {};
         
-        // Simpan buffer teks per tab agar saat pindah tab teksnya tidak tercampur
         let tabPasteBuffers = { bin: "", artikel: "", promo: "", new_arrival: "" };
 
+        // FUNGSI LOAD DATA DARI SPREADSHEET (HANYA BERJALAN 1X SAAT APLIKASI DIBUKA)
         const loadAllMasters = async () => {
             const overlay = document.getElementById('loading-overlay');
+            const loadText = document.getElementById('loading-text');
             
-            // 1. BACA LOKAL DULU AGAR INSTAN (SECEPAT KILAT TANPA LOADING LAMA)
             try {
-                const localArt = localStorage.getItem('cache_artikel');
-                const localBin = localStorage.getItem('cache_bin');
-                const localPromo = localStorage.getItem('cache_promo');
-                const localNew = localStorage.getItem('cache_new');
-
-                if (localArt) masterArtikel = JSON.parse(localArt);
-                if (localBin) masterStokBin = JSON.parse(localBin);
-                if (localPromo) masterPromo = JSON.parse(localPromo);
-                if (localNew) masterNewArrival = JSON.parse(localNew);
-
-                // Jika data lokal ada, langsung sembunyikan loading screen!
-                if (localArt && localBin) {
-                    initFilters();
-                    overlay.style.display = 'none';
-                    // Kita tidak return di sini, karena kita tetap butuh menarik data terbaru dari cloud (background sync)
-                }
-            } catch (e) {
-                console.log("Gagal membaca cache lokal.");
-            }
-
-            // 2. SINKRONISASI CLOUD DI BACKGROUND (SILENT SYNC)
-            try {
-                if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec") {
-                    if(Object.keys(masterArtikel).length === 0) {
-                        await new Promise(r => setTimeout(r, 600));
-                        masterArtikel = {
-                            "910000001001": {sku:"910000001001", crossSite:"-", desc:"RANSEL ENDOWMNET, BLU, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:0, gender:"-", warna:"BLU", size:"NOS"},
-                            "910000005001": {sku:"910000005001", crossSite:"-", desc:"R.ARMY, BLK, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:925000, gender:"-", warna:"BLK", size:"NOS"}
-                        };
-                        masterStokBin = { "910000005001": [{binCode:"A-01-01", qty:5}] };
-                        masterPromo = { "910000005001": [{persentase:10, nama:"Promo Member"}] };
-                        masterNewArrival = { "910000001001": true };
-                    }
+                if (GAS_URL === "URL_WEB_APP_APPS_SCRIPT_ANDA") {
+                    loadText.innerText = "Mode Demo Aktif...";
+                    await new Promise(r => setTimeout(r, 600));
+                    masterArtikel = {
+                        "910000001001": {sku:"910000001001", crossSite:"-", desc:"RANSEL ENDOWMNET, BLU, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:0, gender:"-", warna:"BLU", size:"NOS"},
+                        "910000005001": {sku:"910000005001", crossSite:"-", desc:"R.ARMY, BLK, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:925000, gender:"-", warna:"BLK", size:"NOS"}
+                    };
+                    masterStokBin = { "910000005001": [{binCode:"A-01-01", qty:5}] };
+                    masterPromo = { "910000005001": [{persentase:10, nama:"Promo Member"}] };
+                    masterNewArrival = { "910000001001": true };
                 } else {
+                    loadText.innerText = "Menarik Data Langsung Dari Spreadsheet...";
+                    
                     // Tarik paralel dari Google Apps Script
                     const [resArtikel, resBin, resPromo, resNew] = await Promise.all([
-                        fetch(`${GAS_URL}?type=artikel`).then(res => res.json()).catch(() => null),
-                        fetch(`${GAS_URL}?type=bin`).then(res => res.json()).catch(() => null),
-                        fetch(`${GAS_URL}?type=promo`).then(res => res.json()).catch(() => null),
-                        fetch(`${GAS_URL}?type=new_arrival`).then(res => res.json()).catch(() => null)
+                        fetch(`${GAS_URL}?type=artikel`).then(res => res.json()).catch(() => []),
+                        fetch(`${GAS_URL}?type=bin`).then(res => res.json()).catch(() => []),
+                        fetch(`${GAS_URL}?type=promo`).then(res => res.json()).catch(() => []),
+                        fetch(`${GAS_URL}?type=new_arrival`).then(res => res.json()).catch(() => [])
                     ]);
 
-                    // Parse dan timpa ke LocalStorage agar selalu up-to-date untuk kunjungan berikutnya
-                    if(resArtikel && Array.isArray(resArtikel)) {
-                        masterArtikel = {};
+                    // Parse dan simpan ke variabel Session (RAM) agar pencarian secepat kilat
+                    masterArtikel = {};
+                    if(Array.isArray(resArtikel)) {
                         resArtikel.forEach(item => {
                             const descParts = item.desc ? item.desc.split(',') : [];
                             masterArtikel[item.sku] = {
@@ -364,71 +340,68 @@
                                 size: descParts.length > 2 ? descParts[2].trim() : "-"
                             };
                         });
-                        localStorage.setItem('cache_artikel', JSON.stringify(masterArtikel));
                     }
 
-                    if(resBin && Array.isArray(resBin)) {
-                        masterStokBin = {};
+                    masterStokBin = {};
+                    if(Array.isArray(resBin)) {
                         resBin.forEach(b => {
                             if(!masterStokBin[b.sku]) masterStokBin[b.sku] = [];
                             masterStokBin[b.sku].push({ binCode: b.binCode, qty: b.qty });
                         });
-                        localStorage.setItem('cache_bin', JSON.stringify(masterStokBin));
                     }
 
-                    if(resPromo && Array.isArray(resPromo)) {
-                        masterPromo = {};
+                    masterPromo = {};
+                    if(Array.isArray(resPromo)) {
                         resPromo.forEach(p => {
                             if(!masterPromo[p.sku]) masterPromo[p.sku] = [];
                             masterPromo[p.sku].push({ persentase: p.persentase, nama: p.nama });
                         });
-                        localStorage.setItem('cache_promo', JSON.stringify(masterPromo));
                     }
 
-                    if(resNew && Array.isArray(resNew)) {
-                        masterNewArrival = {};
+                    masterNewArrival = {};
+                    if(Array.isArray(resNew)) {
                         resNew.forEach(sku => { masterNewArrival[sku] = true; });
-                        localStorage.setItem('cache_new', JSON.stringify(masterNewArrival));
                     }
                 }
 
                 initFilters();
                 
-                // Jika loading screen belum hilang (karena baru pertama kali buka web)
-                if (overlay.style.display !== 'none') {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => { overlay.style.display = 'none'; }, 300);
-                    showToast("Master Data berhasil dimuat dari Cloud!", "success");
-                }
+                // Hilangkan loading screen
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                showToast("Master Data dari Spreadsheet Berhasil Dimuat!", "success");
 
             } catch (error) {
-                console.error("Error Sync Background:", error);
-                if(Object.keys(masterArtikel).length === 0) {
-                    overlay.innerHTML = `
-                        <i class="fa-solid fa-triangle-exclamation text-red-500 text-5xl mb-4"></i>
-                        <p class="text-white font-bold">Gagal Sinkronisasi Master</p>
-                        <p class="text-zinc-400 text-sm mt-2">${error.message}</p>
-                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-outdoor-accent rounded-lg text-white font-medium">Coba Lagi</button>
-                    `;
-                } else {
-                    // Jika gagal sync background tapi data lokal ada, jangan ganggu user, biarkan pakai data lokal
-                    showToast("Sinyal ke server lemah, memakai data tersimpan.", "error");
-                }
+                console.error("Error Sync Spreadsheet:", error);
+                overlay.innerHTML = `
+                    <i class="fa-solid fa-triangle-exclamation text-red-500 text-5xl mb-4"></i>
+                    <p class="text-white font-bold text-lg">Gagal Terhubung ke Spreadsheet</p>
+                    <p class="text-zinc-400 text-sm mt-2 max-w-sm text-center">Pastikan URL Web App sudah benar, dan Akses 'Siapa Saja (Anyone)' sudah diaktifkan di Apps Script.</p>
+                    <button onclick="location.reload()" class="mt-6 px-6 py-2.5 bg-outdoor-accent rounded-lg text-white font-bold shadow-lg">Coba Lagi</button>
+                `;
             }
         };
 
         const syncToCloud = async (type, dataArray) => {
-            if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec") {
-                showToast("Berhasil disimpan (Mode Demo/Local)!", "success");
+            if (GAS_URL === "URL_WEB_APP_APPS_SCRIPT_ANDA") {
+                showToast("Berhasil disimpan (Hanya Mode Demo)!", "success");
                 return true;
             }
 
             try {
                 const response = await fetch(GAS_URL, {
                     method: "POST",
+                    // Mengirimkan body sebagai string (plain text) untuk menghindari error CORS preflight
                     body: JSON.stringify({ type: type, data: JSON.stringify(dataArray) })
                 });
-                const res = await response.json();
+                
+                // Jika response tidak OK secara HTTP
+                if (!response.ok) throw new Error("Network response was not ok");
+                
+                const textRes = await response.text();
+                let res;
+                try { res = JSON.parse(textRes); } catch(e) { throw new Error("Respon Spreadsheet tidak valid."); }
+
                 if(res.status === "success") {
                     showToast(res.message, "success");
                     return true;
@@ -436,6 +409,7 @@
                     throw new Error(res.message);
                 }
             } catch (err) {
+                console.error(err);
                 showToast("Gagal menyimpan ke Spreadsheet: " + err.message, "error");
                 return false;
             }
@@ -450,7 +424,7 @@
             toast.className = `toast bg-zinc-800 border ${type === 'success' ? 'border-green-900/50' : 'border-red-900/50'}`;
             toast.innerHTML = `${icon} <span class="text-sm font-medium">${message}</span>`;
             container.appendChild(toast);
-            setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 3000);
+            setTimeout(() => { if (container.contains(toast)) container.removeChild(toast); }, 3500);
         };
 
         const switchTab = (tabId) => {
@@ -597,7 +571,7 @@
             document.getElementById('filter-result-section').classList.remove('hidden');
         });
 
-        // FORM PENGECEKAN STOK
+        // FORM PENGECEKAN STOK (LANGSUNG DARI RAM SEMENTARA - SUPER CEPAT)
         const inputSku = document.getElementById('sku-input');
         const resetFormCek = () => {
             inputSku.value = '';
@@ -688,7 +662,7 @@
             if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop().catch(() => {});
         };
 
-        // UPDATE MASTER MODAL & TAB SWITCHING BERSIH
+        // UPDATE MASTER MODAL & TAB SWITCHING
         const toggleMasterModal = (show) => {
             const modal = document.getElementById('master-modal');
             const content = document.getElementById('master-modal-content');
@@ -702,7 +676,6 @@
         };
 
         const switchMasterTab = (tab) => {
-            // Simpan teks saat ini ke buffer tab aktif sebelum berpindah
             const currentTab = document.getElementById('active-master-tab').value;
             tabPasteBuffers[currentTab] = document.getElementById('paste-area').value;
 
@@ -719,7 +692,6 @@
             const textarea = document.getElementById('paste-area');
             const hintText = document.getElementById('paste-hint-text');
 
-            // Munculkan teks dari buffer tab tersebut agar tidak tercampur dan tampilannya sesuai
             textarea.value = tabPasteBuffers[tab] || "";
 
             if(tab === 'bin') {
@@ -753,17 +725,27 @@
                     if (select.options[i].value === val) { select.remove(i); break; }
                 }
                 select.value = "Diskon Bertingkat";
-                showToast("Program promo dihapus.", "success");
+                showToast("Program promo dihapus dari aplikasi.", "success");
             }
         };
 
         const processPastedData = async () => {
             const rawText = document.getElementById('paste-area').value.trim();
             if(!rawText) { showToast("Data masih kosong!", "error"); return; }
+            
+            const btnSave = document.getElementById('btn-save-master');
+            btnSave.disabled = true;
+            btnSave.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menyimpan...`;
 
             const activeTab = document.getElementById('active-master-tab').value;
             const rows = rawText.split('\n');
             let cloudPayload = [];
+
+            // Temporary variables agar data yg diproses tidak langsung menimpa sistem sebelum sukses ke cloud
+            let tempMasterPromo = JSON.parse(JSON.stringify(masterPromo));
+            let tempMasterBin = JSON.parse(JSON.stringify(masterStokBin));
+            let tempMasterNew = JSON.parse(JSON.stringify(masterNewArrival));
+            let tempMasterArt = JSON.parse(JSON.stringify(masterArtikel));
 
             if(activeTab === 'promo') {
                 let selectedProgramName = document.getElementById('promo-program-select').value;
@@ -774,10 +756,10 @@
                 }
                 if (selectedProgramName === "Lainnya" && detectedCustomName) selectedProgramName = detectedCustomName;
 
-                // Update lokal
-                Object.keys(masterPromo).forEach(sku => {
-                    masterPromo[sku] = masterPromo[sku].filter(p => p.nama !== selectedProgramName);
-                    if(masterPromo[sku].length === 0) delete masterPromo[sku];
+                // Hapus data promo lama dari program yang sama
+                Object.keys(tempMasterPromo).forEach(sku => {
+                    tempMasterPromo[sku] = tempMasterPromo[sku].filter(p => p.nama !== selectedProgramName);
+                    if(tempMasterPromo[sku].length === 0) delete tempMasterPromo[sku];
                 });
 
                 rows.forEach((row, index) => {
@@ -788,18 +770,17 @@
                         const persentase = cols.length >= 2 ? (parseInt(cols[1].trim().replace(/\D/g,'')) || 0) : 0;
                         const nama = cols.length >= 3 && cols[2].trim() !== '' ? cols[2].trim() : selectedProgramName;
 
-                        if(!masterPromo[sku]) masterPromo[sku] = [];
-                        masterPromo[sku].push({ persentase, nama });
+                        if(!tempMasterPromo[sku]) tempMasterPromo[sku] = [];
+                        tempMasterPromo[sku].push({ persentase, nama });
                     }
                 });
 
-                // Bungkus array untuk dikirim ke cloud
-                for(let sku in masterPromo) {
-                    masterPromo[sku].forEach(p => cloudPayload.push({ sku, persentase: p.persentase, nama: p.nama }));
+                for(let sku in tempMasterPromo) {
+                    tempMasterPromo[sku].forEach(p => cloudPayload.push({ sku, persentase: p.persentase, nama: p.nama }));
                 }
 
             } else if(activeTab === 'bin') {
-                masterStokBin = {};
+                tempMasterBin = {};
                 rows.forEach((row, index) => {
                     const cols = row.split('\t');
                     if(index === 0 && cols[0].toLowerCase().includes('sku')) return;
@@ -807,18 +788,19 @@
                         const sku = cols[0].trim().toUpperCase();
                         const binCode = cols[1].trim().toUpperCase();
                         const qty = parseInt(cols[2].trim()) || 0;
-                        if(!masterStokBin[sku]) masterStokBin[sku] = [];
-                        masterStokBin[sku].push({ binCode, qty });
+                        if(!tempMasterBin[sku]) tempMasterBin[sku] = [];
+                        tempMasterBin[sku].push({ binCode, qty });
                         cloudPayload.push({ sku, binCode, qty });
                     }
                 });
 
             } else if(activeTab === 'new_arrival') {
+                tempMasterNew = {};
                 rows.forEach((row, index) => {
                     const cols = row.split('\t');
                     if(cols[0] && cols[0].trim() !== '') {
                         const sku = cols[0].trim().toUpperCase();
-                        masterNewArrival[sku] = true;
+                        tempMasterNew[sku] = true;
                         cloudPayload.push(sku);
                     }
                 });
@@ -837,7 +819,7 @@
                             price: parseInt(cols[6].trim().replace(/,/g, '').replace(/\./g, '')) || 0,
                             gender: cols[7].trim()
                         };
-                        masterArtikel[sku] = {
+                        tempMasterArt[sku] = {
                             sku: sku, crossSite: item.crossSite, desc: desc,
                             mc2: item.mc2, mc3: item.mc3, mc4: item.mc,
                             locAmount: item.price, gender: item.gender,
@@ -849,21 +831,28 @@
                 });
             }
 
-            // Kirim dan sinkronkan ke Google Spreadsheet
+            // Tempar langsung ke Google Spreadsheet
             const success = await syncToCloud(activeTab, cloudPayload);
+            
             if(success) {
-                // UPDATE LOCAL STORAGE AGAR INSTAN TERBACA TANPA HARUS REFRESH
-                if(activeTab === 'artikel') localStorage.setItem('cache_artikel', JSON.stringify(masterArtikel));
-                if(activeTab === 'bin') localStorage.setItem('cache_bin', JSON.stringify(masterStokBin));
-                if(activeTab === 'promo') localStorage.setItem('cache_promo', JSON.stringify(masterPromo));
-                if(activeTab === 'new_arrival') localStorage.setItem('cache_new', JSON.stringify(masterNewArrival));
+                // JIKA BERHASIL TERSIMPAN DI SPREADSHEET, BARU TERAPKAN KE RAM APLIKASI
+                if(activeTab === 'artikel') masterArtikel = tempMasterArt;
+                if(activeTab === 'bin') masterStokBin = tempMasterBin;
+                if(activeTab === 'promo') masterPromo = tempMasterPromo;
+                if(activeTab === 'new_arrival') masterNewArrival = tempMasterNew;
 
-                tabPasteBuffers[activeTab] = ""; // Kosongkan buffer jika berhasil
+                tabPasteBuffers[activeTab] = ""; 
                 document.getElementById('paste-area').value = "";
                 toggleMasterModal(false);
+                
+                // Refresh tampilan pencarian yang sedang aktif
                 const currentCek = inputSku.value.toUpperCase();
                 if(currentCek) inputSku.dispatchEvent(new Event('input'));
             }
+
+            // Kembalikan tombol ke bentuk semula
+            btnSave.disabled = false;
+            btnSave.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Simpan & Sinkronkan`;
         };
 
         document.addEventListener('DOMContentLoaded', () => {
