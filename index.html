@@ -265,7 +265,7 @@
                 </p>
 
                 <div class="relative">
-                    <textarea id="paste-area" rows="7" class="w-full bg-[#0d1117] border border-outdoor-700 rounded-lg p-4 text-zinc-300 font-mono text-sm focus:ring-1 focus:ring-outdoor-accent focus:border-outdoor-accent outline-none resize-y" placeholder="Copy data dari Excel lalu paste di sini..."></textarea>
+                    <textarea id="paste-area" onclick="this.select()" rows="7" class="w-full bg-[#0d1117] border border-outdoor-700 rounded-lg p-4 text-zinc-300 font-mono text-sm focus:ring-1 focus:ring-outdoor-accent focus:border-outdoor-accent outline-none resize-y" placeholder="Copy data dari Excel lalu paste di sini..."></textarea>
                     <div class="absolute bottom-2 right-2 text-zinc-600 pointer-events-none"><i class="fa-solid fa-grip-lines-vertical rotate-45"></i></div>
                 </div>
                 <p id="paste-hint-text" class="text-xs text-zinc-500 mt-2 italic">*Data harus dipisahkan oleh kolom (Tab). Salin langsung dari file Excel atau Spreadsheet.</p>
@@ -293,7 +293,7 @@
     </div>
 
     <script>
-        const GAS_URL = "URL_WEB_APP_APPS_SCRIPT_ANDA"; 
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec"; 
 
         let masterArtikel = {};
         let masterStokBin = {};
@@ -306,28 +306,54 @@
 
         const loadAllMasters = async () => {
             const overlay = document.getElementById('loading-overlay');
+            
+            // 1. BACA LOKAL DULU AGAR INSTAN (SECEPAT KILAT TANPA LOADING LAMA)
+            try {
+                const localArt = localStorage.getItem('cache_artikel');
+                const localBin = localStorage.getItem('cache_bin');
+                const localPromo = localStorage.getItem('cache_promo');
+                const localNew = localStorage.getItem('cache_new');
+
+                if (localArt) masterArtikel = JSON.parse(localArt);
+                if (localBin) masterStokBin = JSON.parse(localBin);
+                if (localPromo) masterPromo = JSON.parse(localPromo);
+                if (localNew) masterNewArrival = JSON.parse(localNew);
+
+                // Jika data lokal ada, langsung sembunyikan loading screen!
+                if (localArt && localBin) {
+                    initFilters();
+                    overlay.style.display = 'none';
+                    // Kita tidak return di sini, karena kita tetap butuh menarik data terbaru dari cloud (background sync)
+                }
+            } catch (e) {
+                console.log("Gagal membaca cache lokal.");
+            }
+
+            // 2. SINKRONISASI CLOUD DI BACKGROUND (SILENT SYNC)
             try {
                 if (GAS_URL === "https://script.google.com/macros/s/AKfycbw2UITd8iUfwoi6wHnH6Yaz88uANjf9oTIoq8BJHpaC4hUwXd7cf2DF1j13baz8wdFY/exec") {
-                    await new Promise(r => setTimeout(r, 600));
-                    masterArtikel = {
-                        "910000001001": {sku:"910000001001", crossSite:"-", desc:"RANSEL ENDOWMNET, BLU, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:0, gender:"-", warna:"BLU", size:"NOS"},
-                        "910000005001": {sku:"910000005001", crossSite:"-", desc:"R.ARMY, BLK, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:925000, gender:"-", warna:"BLK", size:"NOS"}
-                    };
-                    masterStokBin = { "910000005001": [{binCode:"A-01-01", qty:5}] };
-                    masterPromo = { "910000005001": [{persentase:10, nama:"Promo Member"}] };
-                    masterNewArrival = { "910000001001": true };
+                    if(Object.keys(masterArtikel).length === 0) {
+                        await new Promise(r => setTimeout(r, 600));
+                        masterArtikel = {
+                            "910000001001": {sku:"910000001001", crossSite:"-", desc:"RANSEL ENDOWMNET, BLU, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:0, gender:"-", warna:"BLU", size:"NOS"},
+                            "910000005001": {sku:"910000005001", crossSite:"-", desc:"R.ARMY, BLK, NOS", mc2:"-", mc3:"-", mc4:"BACKPACK", locAmount:925000, gender:"-", warna:"BLK", size:"NOS"}
+                        };
+                        masterStokBin = { "910000005001": [{binCode:"A-01-01", qty:5}] };
+                        masterPromo = { "910000005001": [{persentase:10, nama:"Promo Member"}] };
+                        masterNewArrival = { "910000001001": true };
+                    }
                 } else {
-                    // Tarik paralel dari Google Apps Script untuk masing-masing cache
+                    // Tarik paralel dari Google Apps Script
                     const [resArtikel, resBin, resPromo, resNew] = await Promise.all([
-                        fetch(`${GAS_URL}?type=artikel`).then(res => res.json()).catch(() => []),
-                        fetch(`${GAS_URL}?type=bin`).then(res => res.json()).catch(() => []),
-                        fetch(`${GAS_URL}?type=promo`).then(res => res.json()).catch(() => []),
-                        fetch(`${GAS_URL}?type=new_arrival`).then(res => res.json()).catch(() => [])
+                        fetch(`${GAS_URL}?type=artikel`).then(res => res.json()).catch(() => null),
+                        fetch(`${GAS_URL}?type=bin`).then(res => res.json()).catch(() => null),
+                        fetch(`${GAS_URL}?type=promo`).then(res => res.json()).catch(() => null),
+                        fetch(`${GAS_URL}?type=new_arrival`).then(res => res.json()).catch(() => null)
                     ]);
 
-                    // Parse Artikel
-                    masterArtikel = {};
-                    if(Array.isArray(resArtikel)) {
+                    // Parse dan timpa ke LocalStorage agar selalu up-to-date untuk kunjungan berikutnya
+                    if(resArtikel && Array.isArray(resArtikel)) {
+                        masterArtikel = {};
                         resArtikel.forEach(item => {
                             const descParts = item.desc ? item.desc.split(',') : [];
                             masterArtikel[item.sku] = {
@@ -338,46 +364,56 @@
                                 size: descParts.length > 2 ? descParts[2].trim() : "-"
                             };
                         });
+                        localStorage.setItem('cache_artikel', JSON.stringify(masterArtikel));
                     }
 
-                    // Parse Bin
-                    masterStokBin = {};
-                    if(Array.isArray(resBin)) {
+                    if(resBin && Array.isArray(resBin)) {
+                        masterStokBin = {};
                         resBin.forEach(b => {
                             if(!masterStokBin[b.sku]) masterStokBin[b.sku] = [];
                             masterStokBin[b.sku].push({ binCode: b.binCode, qty: b.qty });
                         });
+                        localStorage.setItem('cache_bin', JSON.stringify(masterStokBin));
                     }
 
-                    // Parse Promo
-                    masterPromo = {};
-                    if(Array.isArray(resPromo)) {
+                    if(resPromo && Array.isArray(resPromo)) {
+                        masterPromo = {};
                         resPromo.forEach(p => {
                             if(!masterPromo[p.sku]) masterPromo[p.sku] = [];
                             masterPromo[p.sku].push({ persentase: p.persentase, nama: p.nama });
                         });
+                        localStorage.setItem('cache_promo', JSON.stringify(masterPromo));
                     }
 
-                    // Parse New Arrival
-                    masterNewArrival = {};
-                    if(Array.isArray(resNew)) {
+                    if(resNew && Array.isArray(resNew)) {
+                        masterNewArrival = {};
                         resNew.forEach(sku => { masterNewArrival[sku] = true; });
+                        localStorage.setItem('cache_new', JSON.stringify(masterNewArrival));
                     }
                 }
 
                 initFilters();
-                overlay.style.opacity = '0';
-                setTimeout(() => { overlay.style.display = 'none'; }, 300);
-                showToast("Master Data berhasil dimuat dari Cloud!", "success");
+                
+                // Jika loading screen belum hilang (karena baru pertama kali buka web)
+                if (overlay.style.display !== 'none') {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                    showToast("Master Data berhasil dimuat dari Cloud!", "success");
+                }
 
             } catch (error) {
-                console.error("Error:", error);
-                overlay.innerHTML = `
-                    <i class="fa-solid fa-triangle-exclamation text-red-500 text-5xl mb-4"></i>
-                    <p class="text-white font-bold">Gagal Sinkronisasi Master</p>
-                    <p class="text-zinc-400 text-sm mt-2">${error.message}</p>
-                    <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-outdoor-accent rounded-lg text-white font-medium">Coba Lagi</button>
-                `;
+                console.error("Error Sync Background:", error);
+                if(Object.keys(masterArtikel).length === 0) {
+                    overlay.innerHTML = `
+                        <i class="fa-solid fa-triangle-exclamation text-red-500 text-5xl mb-4"></i>
+                        <p class="text-white font-bold">Gagal Sinkronisasi Master</p>
+                        <p class="text-zinc-400 text-sm mt-2">${error.message}</p>
+                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-outdoor-accent rounded-lg text-white font-medium">Coba Lagi</button>
+                    `;
+                } else {
+                    // Jika gagal sync background tapi data lokal ada, jangan ganggu user, biarkan pakai data lokal
+                    showToast("Sinyal ke server lemah, memakai data tersimpan.", "error");
+                }
             }
         };
 
@@ -816,6 +852,12 @@
             // Kirim dan sinkronkan ke Google Spreadsheet
             const success = await syncToCloud(activeTab, cloudPayload);
             if(success) {
+                // UPDATE LOCAL STORAGE AGAR INSTAN TERBACA TANPA HARUS REFRESH
+                if(activeTab === 'artikel') localStorage.setItem('cache_artikel', JSON.stringify(masterArtikel));
+                if(activeTab === 'bin') localStorage.setItem('cache_bin', JSON.stringify(masterStokBin));
+                if(activeTab === 'promo') localStorage.setItem('cache_promo', JSON.stringify(masterPromo));
+                if(activeTab === 'new_arrival') localStorage.setItem('cache_new', JSON.stringify(masterNewArrival));
+
                 tabPasteBuffers[activeTab] = ""; // Kosongkan buffer jika berhasil
                 document.getElementById('paste-area').value = "";
                 toggleMasterModal(false);
